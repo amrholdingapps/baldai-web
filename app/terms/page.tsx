@@ -269,8 +269,8 @@ const TermsAndConditions = () => {
         <h2 className="text-foreground text-2xl font-regular mb-4">Contact Us</h2>
         <p className="text-foreground/90 mb-4">
           If you have any questions about these Terms and Conditions, You can contact us by email at{" "}
-          <a href="mailto:baldaiapp@gmail.com" className="text-blue-500 underline">
-            baldaiapp@gmail.com
+          <a href="mailto:hello@hairlossai.app" className="text-blue-500 underline">
+            hello@hairlossai.app
           </a>
         </p>
       </div>

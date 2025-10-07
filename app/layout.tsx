@@ -1,5 +1,3 @@
-import { Separator } from "@/components/ui/separator"
-import Footer from "@/components/Footer"
 import "./globals.css"
 
 export const metadata = {
@@ -7,27 +5,15 @@ export const metadata = {
   description: "Find out if you're losing hair with Hairloss AI",
 }
 
-const MaxWidthContainer = ({ children }: { children: React.ReactNode }) => (
-  <div className="max-w-screen px-6 sm:px-8">{children}</div>
-)
-
 export default function RootLayout({ children }) {
   return (
-    <html className="dark font-sfProText" lang="en">
-      <body className="flex flex-col min-h-screen bg-background text-foreground items-center">
+    <html className="dark font-sfProDisplay overflow-hidden" lang="en">
+      <body className="min-h-screen bg-background text-foreground overflow-hidden">
         <script
           type="module"
           src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js"
         ></script>
-        <main className="flex grow justify-center my-8 sm:my-16">
-          <MaxWidthContainer>{children}</MaxWidthContainer>
-        </main>
-
-        <Separator />
-
-        <MaxWidthContainer>
-          <Footer />
-        </MaxWidthContainer>
+        <main>{children}</main>
       </body>
     </html>
   )

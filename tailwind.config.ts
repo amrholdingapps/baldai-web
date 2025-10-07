@@ -9,7 +9,7 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
-  			sfProText: ["SFProText", "sans-serif"]
+  			sfProDisplay: ["SFProDisplay", "sans-serif"]
   		},
   		fontWeight: {
   			regular: '400',

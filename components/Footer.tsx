@@ -6,7 +6,7 @@ function Footer() {
   return (
     <div className="w-full flex flex-row my-5 justify-between text-sm">
       <a href="/" className="hover:underline text-gray-300">
-        © 2024 Tricho Labs
+        © 2025 AMR Holdings Inc.
       </a>
       {dot}
       <a href="/privacy" className="hover:underline text-gray-300">
