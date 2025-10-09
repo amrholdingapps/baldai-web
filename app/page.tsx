@@ -6,7 +6,7 @@ export default function Home() {
     <div className="h-screen w-screen bg-background text-foreground flex flex-col overflow-hidden">
       {/* Navigation */}
       <div
-        className="absolute bottom-4 left-1/2 transform -translate-x-1/2 sm:top-4 sm:right-8 sm:bottom-auto sm:left-auto sm:transform-none"
+        className="absolute bottom-4 left-1/2 transform -translate-x-1/2 sm:top-4 sm:right-8 sm:bottom-auto sm:left-auto sm:transform-none z-50"
         style={{ opacity: 0.7 }}
       >
         <div className="flex gap-6">
@@ -30,7 +30,7 @@ export default function Home() {
           style={{
             height: "auto",
             maxHeight: "65vh",
-            maxWidth: "100vw",
+            maxWidth: "120vw",
           }}
           priority
         />
@@ -76,23 +76,19 @@ export default function Home() {
           >
             <li className="flex items-center gap-3">
               <Image src="/images/checkmark.svg" width={12} height={13} alt="Checkmark" />
-              <span>Scan Your Hair with AI Insights</span>
+              <span>World’s Most Accurate AI Hair Scan</span>
             </li>
             <li className="flex items-center gap-3">
               <Image src="/images/checkmark.svg" width={12} height={13} alt="Checkmark" />
-              <span>Get Instant, Personal Results</span>
+              <span>Over 1 Million Hairlines Scanned</span>
             </li>
             <li className="flex items-center gap-3">
               <Image src="/images/checkmark.svg" width={12} height={13} alt="Checkmark" />
-              <span>Create Your Custom Care Routine</span>
+              <span>Setup Custom Routines And Get Reminders</span>
             </li>
             <li className="flex items-center gap-3">
               <Image src="/images/checkmark.svg" width={12} height={13} alt="Checkmark" />
-              <span>Track Scans and Treatments</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <Image src="/images/checkmark.svg" width={12} height={13} alt="Checkmark" />
-              <span>Log and Compare Your Progress</span>
+              <span>Unlimited Scans With Subscription</span>
             </li>
           </ul>
         </div>

@@ -2,7 +2,7 @@ import React from "react"
 
 const TermsAndConditions = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen pb-4">
+    <div className="flex justify-center min-h-screen py-8 px-4">
       <div className="rounded-lg w-full max-w-2xl">
         <div className="mb-14">
           <p className="text-foreground/90 mb-4 text-center">Updated: October 20, 2024</p>
