@@ -3,33 +3,17 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "SFProText";
-  src: url("/fonts/SF-Pro-Text-Regular.ttf") format("truetype");
+  font-family: "SFProDisplay";
+  src: url("/fonts/SF-Pro-Display-Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "SFProText";
-  src: url("/fonts/SF-Pro-Text-Medium.ttf") format("truetype");
+  font-family: "SFProDisplay";
+  src: url("/fonts/SF-Pro-Display-Medium.otf") format("opentype");
   font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "SFProText";
-  src: url("/fonts/SF-Pro-Text-Semibold.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "SFProText";
-  src: url("/fonts/SF-Pro-Text-Bold.ttf") format("truetype");
-  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -74,7 +58,7 @@
     --color-5: 90 100% 63%;
   }
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 264 26% 6%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;

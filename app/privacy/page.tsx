@@ -2,7 +2,7 @@ import React from "react"
 
 const PrivacyPolicy = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen pb-4">
+    <div className="flex justify-center min-h-screen py-8 px-4">
       <div className="rounded-lg w-full max-w-2xl">
         <div className="mb-14">
           <p className="text-foreground/90 mb-4 text-center">Updated: October 20, 2024</p>
@@ -76,12 +76,12 @@ const PrivacyPolicy = () => {
 
         <h2 className="text-foreground text-2xl font-regular mb-4">Personal Data Collection</h2>
         <p className="text-foreground/90 mb-8">
-          The Hairloss AI application is designed to respect your privacy by operating with zero data collection. 
-          All scans and analyses are conducted by OpenAI and our internal ML models, with a firm guarantee that the data
-          is deleted immediately after processing, safeguarding your privacy. Data is shared with
-          this third party solely to obtain analysis results. The app does not transmit any
-          additional information to external servers or third parties, and no data is stored or
-          shared by the company apart from the initial scan.
+          The Hairloss AI application is designed to respect your privacy by operating with zero
+          data collection. All scans and analyses are conducted by OpenAI and our internal ML
+          models, with a firm guarantee that the data is deleted immediately after processing,
+          safeguarding your privacy. Data is shared with this third party solely to obtain analysis
+          results. The app does not transmit any additional information to external servers or third
+          parties, and no data is stored or shared by the company apart from the initial scan.
         </p>
         <p className="text-foreground/90 mb-8">
           Moreover, since the application does not collect any personal data, you can use Hairloss
@@ -259,8 +259,8 @@ const PrivacyPolicy = () => {
         <div className="text-foreground/90 mb-4">
           <p>
             If You have any questions about this Privacy Policy, You can contact us by email at{" "}
-            <a href="mailto:baldaiapp@gmail.com" className="text-blue-500 underline">
-              baldaiapp@gmail.com
+            <a href="mailto:hello@hairlossai.app" className="text-blue-500 underline">
+              hello@hairlossai.app
             </a>
           </p>
         </div>

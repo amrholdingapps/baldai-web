@@ -2,7 +2,7 @@ import React from "react"
 
 const TermsAndConditions = () => {
   return (
-    <div className="flex justify-center items-center min-h-screen pb-4">
+    <div className="flex justify-center min-h-screen py-8 px-4">
       <div className="rounded-lg w-full max-w-2xl">
         <div className="mb-14">
           <p className="text-foreground/90 mb-4 text-center">Updated: October 20, 2024</p>
@@ -269,8 +269,8 @@ const TermsAndConditions = () => {
         <h2 className="text-foreground text-2xl font-regular mb-4">Contact Us</h2>
         <p className="text-foreground/90 mb-4">
           If you have any questions about these Terms and Conditions, You can contact us by email at{" "}
-          <a href="mailto:baldaiapp@gmail.com" className="text-blue-500 underline">
-            baldaiapp@gmail.com
+          <a href="mailto:hello@hairlossai.app" className="text-blue-500 underline">
+            hello@hairlossai.app
           </a>
         </p>
       </div>
