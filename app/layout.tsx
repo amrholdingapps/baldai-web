@@ -7,8 +7,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html className="dark font-sfProDisplay" lang="en">
-      <body className="min-h-screen bg-background text-foreground">
+    <html className="dark font-sfProDisplay overflow-hidden" lang="en">
+      <body className="min-h-screen bg-background text-foreground overflow-hidden">
         <script
           type="module"
           src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js"
