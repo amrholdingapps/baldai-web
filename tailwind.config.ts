@@ -9,12 +9,22 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
+  			/* Figma: SF Pro Display. Loaded in globals.css as SFProDisplay (400, 500). */
   			sfProDisplay: ["SFProDisplay", "sans-serif"]
   		},
   		fontWeight: {
   			regular: '400',
   			medium: '500',
   			bold: '700'
+  		},
+  		/* Design typography: Figma uses 12, 14, 16, 18px; line-height 100% (1) or 160% (1.6) for long text */
+  		fontSize: {
+  			'ds-12': ['12px', { lineHeight: '1' }],
+  			'ds-14': ['14px', { lineHeight: '1' }],
+  			'ds-16': ['16px', { lineHeight: '1' }],
+  			'ds-18': ['18px', { lineHeight: '1' }],
+  			'ds-body-14': ['14px', { lineHeight: '1.6' }],
+  			'ds-body-16': ['16px', { lineHeight: '1.6' }],
   		},
   		maxWidth: {
   			screen: '1000px'
@@ -25,12 +35,23 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			/* Design tokens (Figma). Home page. */
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+  			brand: {
+  				DEFAULT: 'hsl(var(--brand))',
+  				foreground: 'hsl(var(--brand-foreground))'
+  			},
+  			muted: {
+  				DEFAULT: 'hsl(var(--muted))',
+  				foreground: 'hsl(var(--muted-foreground))'
+  			},
+  			border: 'hsl(var(--border))',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
   			},
+  			/* Legacy: terms, privacy, referrals, not-found. Replace when migrating. */
   			popover: {
   				DEFAULT: 'hsl(var(--popover))',
   				foreground: 'hsl(var(--popover-foreground))'
@@ -43,10 +64,6 @@ module.exports = {
   				DEFAULT: 'hsl(var(--secondary))',
   				foreground: 'hsl(var(--secondary-foreground))'
   			},
-  			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
   			accent: {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))'
@@ -55,7 +72,6 @@ module.exports = {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
-  			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
   			chart: {

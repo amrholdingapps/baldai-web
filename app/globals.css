@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Font files: place SF-Pro-Display-*.otf in public/fonts/ */
+@font-face {
+  font-family: "SFProDisplay";
+  src: url("/fonts/SF-Pro-Display-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
 @font-face {
   font-family: "SFProDisplay";
   src: url("/fonts/SF-Pro-Display-Regular.otf") format("opentype");
@@ -18,63 +27,60 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "SFProDisplay";
+  src: url("/fonts/SF-Pro-Display-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --chart-1: 217.2 91.2% 59.8%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    /* ========== Design tokens (Figma Hairloss-AI-main, node 1:2634). Single theme. ========== */
+    --background: 264 22% 11%;           /* Bg/Secondary #1c1824 */
+    --foreground: 0 0% 100%;             /* Txt/Primary #ffffff */
+    --brand: 263 68% 78%;                /* Txt/Accent #bca0ec */
+    --brand-foreground: 0 0% 100%;       /* Txt/Primary-on-color */
+    --muted: 264 15% 18%;                /* Bg/Tertiary #edf0fa0f — dark tint */
+    --muted-foreground: 0 0% 64%;        /* Txt/Secondary #ffffffa3 (averaged) */
+    --border: 264 15% 22%;               /* Border/Primary #ffffff24 (solid equivalent) */
+    --card: 264 15% 18%;                 /* cards same as muted */
+    --card-foreground: 0 0% 100%;
     --radius: 0.4rem;
-    --color-1: 0 100% 63%;
-    --color-2: 270 100% 63%;
-    --color-3: 210 100% 63%;
-    --color-4: 195 100% 63%;
-    --color-5: 90 100% 63%;
-  }
-  .dark {
-    --background: 264 26% 6%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+
+    /* Design: additional tokens (use in components) */
+    --ds-text-accent: 263 68% 78%;       /* #bca0ec */
+    --ds-violet-glow: 248 55% 72%;       /* Shape/Violet Glow #9c91de */
+    --ds-bg-tertiary: 264 15% 18%;       /* Bg/Tertiary */
+    --ds-text-inverse: 264 15% 17%;      /* Txt/Primary-inverse #2a2633 */
+    --ds-text-disable: 0 0% 100% / 0.4;  /* Txt/Disable #ffffff66 */
+
+    /* ========== Legacy: used on terms, privacy, referrals, not-found pages ========== */
+    /* Replace with design tokens above or remove when migrating those pages. */
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
     --chart-1: 220 70% 50%;
