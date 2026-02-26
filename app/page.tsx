@@ -106,13 +106,17 @@ function ProgressDots({
   count,
   active = 0,
   onDotClick,
+  className,
 }: {
   count: number
   active?: number
   onDotClick?: (index: number) => void
+  className?: string
 }) {
   return (
-    <div className="flex items-center justify-center gap-[4px] w-full h-[10px]">
+    <div
+      className={`flex items-center justify-center gap-[4px] w-full h-[10px] ${className ?? ""}`}
+    >
       {Array.from({ length: count }).map((_, i) => (
         <button
           type="button"
@@ -178,7 +182,7 @@ function FeatureCard({
 }) {
   return (
     <div
-      className="flex-shrink-0 aspect-[343/600] w-[calc(100vw-30px)] md:w-[340px] lg:w-[360px] flex flex-col justify-between snap-center overflow-hidden"
+      className="flex-shrink-0 aspect-[343/600] w-[calc(100vw-30px)] md:w-[340px] lg:w-full lg:aspect-[1/1.18] flex flex-col justify-between snap-center overflow-hidden"
       style={{ background: purpleSubtle }}
     >
       <div className="px-[35px] pt-[35px] pb-[15px] flex flex-col gap-[5px]">
@@ -417,6 +421,9 @@ export default function Home() {
     ) {
       return
     }
+    if (typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches) {
+      return
+    }
 
     const autoplayId = window.setInterval(() => {
       reviewsCarousel.scrollTo((reviewsCarousel.activeIndex + 1) % testimonials.length)
@@ -449,13 +456,6 @@ export default function Home() {
                 </button>
               ))}
           </nav>
-          <a
-            href="https://apps.apple.com/us/app/hairloss-ai-scan-hair-health/id6563141135"
-            className="hidden lg:flex items-center justify-center rounded-[10px] px-[20px] py-[12px] text-[14px] font-medium tracking-[0.14px] text-white whitespace-nowrap"
-            style={{ background: purple }}
-          >
-            Download app
-          </a>
           <button
             type="button"
             aria-label="Menu"
@@ -466,7 +466,7 @@ export default function Home() {
           </button>
         </div>
       </header>
-      <div className="h-[71px] md:h-[76px]" />
+      <div className="h-[71px] md:h-[76px] lg:h-[23px]" />
 
       {/* Mobile Menu Overlay */}
       <div
@@ -498,39 +498,62 @@ export default function Home() {
         </nav>
       </div>
 
-      <main className="px-[15px] md:px-6 lg:px-8 max-w-[1240px] mx-auto flex flex-col gap-[150px] md:gap-[170px] pb-0 mt-[72px] md:mt-[52px]">
-        {/* Hero */}
+      <main className="px-[15px] md:px-6 lg:px-8 max-w-[1240px] mx-auto flex flex-col gap-[150px] md:gap-[150px] pb-0 mt-[72px] md:mt-[52px]">
+        {/* Main image */}
         <section className="flex flex-col gap-[25px] lg:gap-[35px]">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.03fr_0.97fr] gap-[25px] lg:gap-[36px] lg:items-end">
-            <div className="flex flex-col gap-[25px]">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.4fr_0.6fr] gap-[25px] lg:gap-[28px] lg:items-start">
+            <div className="flex flex-col gap-[25px] lg:pt-[78px] lg:min-w-0 relative z-10 lg:mr-[-100px]">
               <h1
-                className="text-[32px] lg:text-[56px] font-semibold leading-none tracking-[-0.64px] lg:tracking-[-1.12px] md:w-[70%] lg:w-auto"
+                className="text-[32px] lg:text-[48px] font-semibold leading-none tracking-[-0.64px] lg:tracking-[-1.12px] md:w-[70%] lg:w-auto"
                 style={{ color: purple }}
               >
                 Regain Control of Your Hair with
                 <span style={{ color: purpleMuted }}> AI-Powered Precision</span>
               </h1>
               <p
-                className="text-[18px] font-normal leading-[1.4] tracking-[0.18px] md:w-[70%] lg:w-auto lg:max-w-[560px]"
+                className="text-[18px] lg:text-[24px] font-normal leading-[1.4] tracking-[0.18px] md:w-[70%] lg:w-auto lg:max-w-[560px]"
                 style={{ color: purpleSoft }}
               >
                 The first mobile app designed for professional-grade alopecia tracking. Scan your
                 hair, discover effective treatments, and witness real progress through data.
               </p>
             </div>
-            <div className="w-full aspect-[343/300] lg:aspect-[560/520] overflow-hidden relative">
+            <div className="w-full aspect-[343/300] lg:aspect-auto overflow-hidden relative lg:row-span-2 lg:overflow-visible lg:pt-0 lg:pr-[50px] lg:min-w-0">
               <Image
                 src="/images/redesign/main_image_m.jpg"
                 alt="Hair scan preview"
                 fill
-                className="object-cover"
-                sizes="(min-width: 1024px) 42vw, 100vw"
+                className="object-cover lg:hidden"
+                sizes="100vw"
                 priority
               />
+              <Image
+                src="/images/redesign/main_image_lg.jpg"
+                alt="Hair scan preview"
+                width={2280}
+                height={1995}
+                className="hidden lg:block w-full h-auto"
+                sizes="50vw"
+                priority
+              />
+              <div className="hidden lg:block absolute top-[22%] left-[calc(76%-40px)] right-0">
+                <p
+                  className="text-[16px] font-light leading-[1.4] tracking-[0.16px]"
+                  style={{ color: purple }}
+                >
+                  The world&apos;s most accurate
+                  <br />
+                  AI-powered hair scanner and analysis
+                  <br />
+                  tool for professional-grade alopecia
+                  <br />
+                  tracking.
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col gap-[20px] lg:max-w-[560px]">
+            <div className="flex flex-col gap-[20px] lg:max-w-[560px] lg:self-start lg:pt-[14px]">
               <p
-                className="text-[16px] font-light leading-[1.4] tracking-[0.16px] md:w-[70%] lg:w-auto"
+                className="text-[16px] lg:text-[16px] font-light leading-[1.4] tracking-[0.16px] md:w-[70%] lg:hidden"
                 style={{ color: purple }}
               >
                 The world&apos;s most accurate AI-powered hair scanner and analysis tool for
@@ -560,7 +583,7 @@ export default function Home() {
 
         {/* Technology */}
         <section id="technology" className="flex flex-col gap-[50px] md:gap-[55px]">
-          <div className="flex flex-col gap-[25px] md:max-w-[760px]">
+          <div className="flex flex-col gap-[25px] md:max-w-[760px] lg:max-w-[430px] lg:mx-auto">
             <CategoryTag label="Technology" />
             <SectionTitle>Your Phone is Now a Professional Lab</SectionTitle>
             <SectionDescription>
@@ -569,11 +592,11 @@ export default function Home() {
             </SectionDescription>
           </div>
           <div className="flex flex-col gap-[25px]">
-            <div className="overflow-hidden h-[calc((100vw-30px)*600/343)] md:h-[620px] lg:h-[650px] md:mx-[calc(50%-50vw)]">
+            <div className="overflow-hidden h-[calc((100vw-30px)*600/343)] md:h-[620px] lg:h-auto md:mx-[calc(50%-50vw)] lg:mx-0">
               <div
                 ref={techCarousel.scrollRef}
                 onWheel={handleHorizontalCarouselWheel}
-                className="overflow-x-auto snap-x snap-mandatory flex gap-[10px] -mx-[15px] px-[15px] md:mx-0 md:px-[10px] scrollbar-hide h-full items-start"
+                className="overflow-x-auto snap-x snap-mandatory flex gap-[10px] -mx-[15px] px-[15px] md:mx-0 md:px-[10px] scrollbar-hide h-full items-start lg:grid lg:grid-cols-3 lg:auto-rows-fr lg:gap-[10px] lg:overflow-visible lg:h-auto"
               >
                 {techCards.map((card) => (
                   <FeatureCard
@@ -590,19 +613,24 @@ export default function Home() {
               count={techCards.length}
               active={techCarousel.activeIndex}
               onDotClick={techCarousel.scrollTo}
+              className="lg:hidden"
             />
           </div>
         </section>
 
         {/* Progress Tracking */}
         <section id="progress" className="flex flex-col gap-[50px] md:gap-[55px]">
-          <div className="flex flex-col gap-[25px] md:max-w-[760px]">
+          <div className="flex flex-col gap-[25px] md:max-w-[760px] lg:max-w-none">
             <CategoryTag label="Progress Tracking" />
-            <SectionTitle>Progress You Can Actually Measure</SectionTitle>
-            <SectionDescription>
-              Hair recovery is a marathon. We help you stay motivated by highlighting even the
-              smallest improvements.
-            </SectionDescription>
+            <div className="lg:grid lg:grid-cols-[0.5fr_0.5fr] lg:items-start lg:gap-[30px]">
+              <SectionTitle>Progress You Can Actually Measure</SectionTitle>
+              <div className="lg:pt-[5px]">
+                <SectionDescription>
+                  Hair recovery is a marathon. We help you stay motivated by highlighting even the
+                  smallest improvements.
+                </SectionDescription>
+              </div>
+            </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">
             <TrackingCard
@@ -631,7 +659,7 @@ export default function Home() {
                 imageSrcMdWidth={760}
                 imageSrcMdHeight={250}
                 imageAlt="Progress Tracker"
-                className="aspect-[345/476] md:aspect-auto"
+                className="aspect-[345/476] md:aspect-auto lg:aspect-[1230/224]"
                 imageClassName="md:mt-[24px]"
               />
             </div>
@@ -639,8 +667,11 @@ export default function Home() {
         </section>
 
         {/* Calendar & Treatment */}
-        <section id="calendar" className="flex flex-col items-center gap-[50px]">
-          <div className="w-full md:max-w-[980px] flex flex-col gap-[50px] md:gap-[55px]">
+        <section
+          id="calendar"
+          className="flex flex-col items-center gap-[50px] lg:gap-0 lg:grid lg:grid-cols-[0.34fr_0.66fr] lg:items-center lg:w-full"
+        >
+          <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col gap-[50px] md:gap-[55px] lg:order-2">
             <CategoryTag label="Calendar & Treatment" />
             <div className="flex flex-col gap-[25px] md:gap-[40px]">
               <div className="flex flex-col gap-[20px] md:max-w-[760px]">
@@ -681,7 +712,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="w-full md:max-w-[960px] aspect-[343/400] md:aspect-[960/540] overflow-hidden relative">
+          <div className="w-full md:max-w-[960px] lg:max-w-none aspect-[343/400] md:aspect-[960/540] lg:aspect-[360/520] overflow-hidden relative lg:order-1">
             <Image
               src="/images/redesign/routine.jpg"
               alt="Treatment calendar"
@@ -690,7 +721,7 @@ export default function Home() {
               sizes="calc(100vw - 30px)"
             />
             <div
-              className="hidden md:flex absolute inset-[22px] lg:inset-[26px] items-center justify-center"
+              className="hidden md:flex absolute inset-[22px] lg:inset-0 items-center justify-center"
               style={{ background: purpleSubtle }}
             >
               <Image
@@ -698,7 +729,7 @@ export default function Home() {
                 alt="Treatment calendar"
                 width={842}
                 height={914}
-                className="h-[80%] w-auto object-contain"
+                className="h-[80%] lg:h-[74%] w-auto object-contain"
                 sizes="(min-width: 1024px) 760px, 86vw"
               />
             </div>
@@ -708,13 +739,17 @@ export default function Home() {
         {/* Testimonials */}
         <section id="testimonials" className="flex flex-col items-center gap-[50px] md:gap-[55px]">
           <div className="w-full flex flex-col gap-[50px]">
-            <div className="flex flex-col gap-[25px] md:max-w-[760px]">
+            <div className="flex flex-col gap-[25px] md:max-w-[760px] lg:max-w-none">
               <CategoryTag label="Testimonials" />
-              <SectionTitle>Trusted by 50,000+ men From over 20 countries</SectionTitle>
-              <SectionDescription>
-                Verified users share measurable changes based on consistent scans and objective hair
-                health scores
-              </SectionDescription>
+              <div className="lg:grid lg:grid-cols-[0.5fr_0.5fr] lg:items-start lg:gap-[30px]">
+                <SectionTitle>Trusted by 50,000+ men From over 20 countries</SectionTitle>
+                <div className="lg:pt-[5px]">
+                  <SectionDescription>
+                    Verified users share measurable changes based on consistent scans and objective
+                    hair health scores
+                  </SectionDescription>
+                </div>
+              </div>
             </div>
             <div className="flex flex-col gap-[25px]">
               <div
@@ -724,12 +759,12 @@ export default function Home() {
                 onMouseLeave={() => setIsReviewsAutoplayPaused(false)}
                 onTouchStart={() => setIsReviewsAutoplayPaused(true)}
                 onTouchEnd={() => setIsReviewsAutoplayPaused(false)}
-                className="overflow-x-auto snap-x snap-mandatory flex gap-[16px] -mx-[15px] px-[15px] md:mx-0 md:px-[16px] scrollbar-hide"
+                className="overflow-x-auto snap-x snap-mandatory flex gap-[16px] -mx-[15px] px-[15px] md:mx-0 md:px-[16px] scrollbar-hide lg:grid lg:grid-cols-5 lg:gap-[12px] lg:overflow-visible lg:px-0 lg:mx-0"
               >
                 {testimonials.map((t, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 w-[283px] md:w-[320px] h-[350px] flex flex-col justify-between p-[25px] snap-center"
+                    className="flex-shrink-0 w-[283px] md:w-[320px] lg:w-auto h-[350px] lg:h-auto lg:min-h-[250px] flex flex-col justify-between p-[25px] snap-center"
                     style={{ background: purpleSubtle }}
                   >
                     <p
@@ -764,6 +799,7 @@ export default function Home() {
                 count={testimonials.length}
                 active={reviewsCarousel.activeIndex}
                 onDotClick={reviewsCarousel.scrollTo}
+                className="lg:hidden"
               />
             </div>
           </div>
@@ -806,17 +842,20 @@ export default function Home() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="flex flex-col items-center gap-[50px] md:gap-[55px]">
-          <div className="w-full flex flex-col gap-[50px] md:max-w-[980px]">
+        <section
+          id="faq"
+          className="flex flex-col items-center gap-[50px] md:gap-[55px] lg:grid lg:grid-cols-[0.32fr_0.68fr] lg:items-start lg:w-full"
+        >
+          <div className="w-full flex flex-col gap-[50px] md:max-w-[980px] lg:max-w-none lg:col-span-2 lg:items-center">
             <CategoryTag label="Frequently Asked Questions" />
-            <div className="flex flex-col gap-[20px]">
+            <div className="flex flex-col gap-[20px] lg:items-center lg:text-center lg:max-w-[540px]">
               <SectionTitle>Frequently Asked Questions</SectionTitle>
               <SectionDescription>
                 Clear answers about scanning, analysis, progress tracking, and data usage
               </SectionDescription>
             </div>
           </div>
-          <div className="w-full md:max-w-[980px] flex flex-col gap-[5px]">
+          <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col gap-[5px] lg:col-start-2 lg:row-start-2">
             {faqItems.slice(0, showAllFaq ? faqItems.length : FAQ_VISIBLE_COUNT).map((item, i) => {
               const isOpen = openFaq === i
               return (
@@ -875,7 +914,7 @@ export default function Home() {
               </button>
             )}
           </div>
-          <div className="w-full md:max-w-[980px] flex flex-col md:flex-row md:items-center md:justify-between gap-[25px]">
+          <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col md:flex-row md:items-center md:justify-between gap-[25px] lg:col-start-1 lg:row-start-2 lg:flex-col lg:items-start lg:justify-start">
             <div className="flex flex-col">
               <span className="text-[16px] font-medium tracking-[0.16px]" style={{ color: purple }}>
                 Still have questions?
