@@ -82,7 +82,7 @@ function PrimaryButton({
     return (
       <button
         type="button"
-        className="flex items-center justify-center gap-[10px] px-[25px] py-[16px] rounded-[12px] border text-[16px] font-medium tracking-[0.16px] whitespace-nowrap w-[70vw] self-start"
+        className="flex items-center justify-center gap-[10px] px-[25px] py-[16px] rounded-[12px] border text-[16px] font-medium tracking-[0.16px] whitespace-nowrap w-[70vw] self-start md:w-auto"
         style={{ borderColor: purpleBorder, color: purple }}
       >
         {children}
@@ -178,7 +178,7 @@ function FeatureCard({
 }) {
   return (
     <div
-      className="flex-shrink-0 aspect-[343/600] w-[calc(100vw-30px)] flex flex-col justify-between snap-center overflow-hidden"
+      className="flex-shrink-0 aspect-[343/600] w-[calc(100vw-30px)] md:w-[340px] lg:w-[360px] flex flex-col justify-between snap-center overflow-hidden"
       style={{ background: purpleSubtle }}
     >
       <div className="px-[35px] pt-[35px] pb-[15px] flex flex-col gap-[5px]">
@@ -198,7 +198,7 @@ function FeatureCard({
         width={686}
         height={900}
         className="w-full h-auto mt-auto"
-        sizes="calc(100vw - 30px)"
+        sizes="(min-width: 1024px) 360px, (min-width: 768px) 340px, calc(100vw - 30px)"
       />
     </div>
   )
@@ -208,19 +208,27 @@ function TrackingCard({
   title,
   description,
   imageSrc,
+  imageSrcMd,
+  imageSrcMdWidth,
+  imageSrcMdHeight,
   imageAlt,
-  aspect = "345/401",
+  className,
+  imageClassName,
 }: {
   title: string
   description: string
   imageSrc: string
+  imageSrcMd?: string
+  imageSrcMdWidth?: number
+  imageSrcMdHeight?: number
   imageAlt: string
-  aspect?: string
+  className?: string
+  imageClassName?: string
 }) {
   return (
     <div
-      className="w-full flex flex-col justify-between overflow-hidden"
-      style={{ background: purpleSubtle, aspectRatio: aspect }}
+      className={`w-full flex flex-col justify-between overflow-hidden ${className ?? ""}`}
+      style={{ background: purpleSubtle }}
     >
       <div className="px-[35px] pt-[35px] pb-[15px] flex flex-col gap-[5px]">
         <h3 className="text-[18px] font-medium tracking-[0.18px]" style={{ color: purple }}>
@@ -238,9 +246,19 @@ function TrackingCard({
         alt={imageAlt}
         width={690}
         height={900}
-        className="w-full h-auto mt-auto"
-        sizes="calc(100vw - 30px)"
+        className={`w-full h-auto mt-auto ${imageSrcMd ? "md:hidden" : ""} ${imageClassName ?? ""}`}
+        sizes="(min-width: 768px) 44vw, calc(100vw - 30px)"
       />
+      {imageSrcMd && (
+        <Image
+          src={imageSrcMd}
+          alt={imageAlt}
+          width={imageSrcMdWidth ?? 1104}
+          height={imageSrcMdHeight ?? 1050}
+          className={`hidden md:block w-full h-auto mt-auto ${imageClassName ?? ""}`}
+          sizes="(min-width: 768px) 44vw, calc(100vw - 30px)"
+        />
+      )}
     </div>
   )
 }
@@ -330,6 +348,7 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState(-1)
   const [showAllFaq, setShowAllFaq] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [isReviewsAutoplayPaused, setIsReviewsAutoplayPaused] = useState(false)
   const techCarousel = useCarouselTracker(techCards.length)
   const reviewsCarousel = useCarouselTracker(testimonials.length, 16)
 
@@ -384,23 +403,74 @@ export default function Home() {
     }
   }, [])
 
+  const handleHorizontalCarouselWheel = useCallback((event: React.WheelEvent<HTMLDivElement>) => {
+    if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
+    event.preventDefault()
+    event.currentTarget.scrollLeft += event.deltaY
+  }, [])
+
+  useEffect(() => {
+    if (isReviewsAutoplayPaused || testimonials.length <= 1) return
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return
+    }
+
+    const autoplayId = window.setInterval(() => {
+      reviewsCarousel.scrollTo((reviewsCarousel.activeIndex + 1) % testimonials.length)
+    }, 4500)
+
+    return () => window.clearInterval(autoplayId)
+  }, [isReviewsAutoplayPaused, reviewsCarousel, reviewsCarousel.activeIndex])
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header
-        className="fixed top-0 left-0 right-0 flex items-center justify-between px-4 py-[23px] z-30 bg-white transition-transform duration-300"
+        className="fixed top-0 left-0 right-0 z-30 bg-white transition-transform duration-300 px-4 py-[23px] md:px-6 lg:px-8"
         style={{ transform: headerVisible || menuOpen ? "translateY(0)" : "translateY(-100%)" }}
       >
-        <Image src="/images/redesign/logo.png" alt="Hairloss AI" width={124} height={25} />
-        <button type="button" aria-label="Menu" onClick={() => setMenuOpen(!menuOpen)}>
-          <Image src="/images/redesign/menu.png" alt="" width={24} height={18} />
-        </button>
+        <div className="w-full max-w-[1240px] mx-auto flex items-center justify-between gap-[24px]">
+          <Image src="/images/redesign/logo.png" alt="Hairloss AI" width={124} height={25} />
+          <nav className="hidden md:flex items-center gap-[14px] lg:gap-[22px]">
+            {menuItems
+              .filter((item) => item.target !== "top")
+              .map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  className="text-[13px] lg:text-[14px] font-regular tracking-[0.13px] lg:tracking-[0.14px] whitespace-nowrap"
+                  style={{ color: item.muted ? purpleMuted : purple }}
+                  onClick={() => handleMenuItemClick(item)}
+                >
+                  {item.label}
+                </button>
+              ))}
+          </nav>
+          <a
+            href="https://apps.apple.com/us/app/hairloss-ai-scan-hair-health/id6563141135"
+            className="hidden lg:flex items-center justify-center rounded-[10px] px-[20px] py-[12px] text-[14px] font-medium tracking-[0.14px] text-white whitespace-nowrap"
+            style={{ background: purple }}
+          >
+            Download app
+          </a>
+          <button
+            type="button"
+            aria-label="Menu"
+            className="md:hidden"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <Image src="/images/redesign/menu.png" alt="" width={24} height={18} />
+          </button>
+        </div>
       </header>
-      <div className="h-[71px]" />
+      <div className="h-[71px] md:h-[76px]" />
 
       {/* Mobile Menu Overlay */}
       <div
-        className="fixed inset-0 z-40 bg-white flex flex-col transition-all duration-300"
+        className="fixed inset-0 z-40 bg-white flex flex-col transition-all duration-300 md:hidden"
         style={{
           opacity: menuOpen ? 1 : 0,
           pointerEvents: menuOpen ? "auto" : "none",
@@ -428,66 +498,70 @@ export default function Home() {
         </nav>
       </div>
 
-      <main className="px-[15px] flex flex-col gap-[150px] pb-0 mt-[72px]">
+      <main className="px-[15px] md:px-6 lg:px-8 max-w-[1240px] mx-auto flex flex-col gap-[150px] md:gap-[170px] pb-0 mt-[72px] md:mt-[52px]">
         {/* Hero */}
-        <section className="flex flex-col gap-[25px]">
-          <div className="flex flex-col gap-[25px]">
-            <h1
-              className="text-[32px] font-semibold leading-none tracking-[-0.64px]"
-              style={{ color: purple }}
-            >
-              Regain Control of Your Hair with
-              <span style={{ color: purpleMuted }}> AI-Powered Precision</span>
-            </h1>
-            <p
-              className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
-              style={{ color: purpleSoft }}
-            >
-              The first mobile app designed for professional-grade alopecia tracking. Scan your
-              hair, discover effective treatments, and witness real progress through data.
-            </p>
-            <div className="w-full aspect-[343/300] overflow-hidden relative">
+        <section className="flex flex-col gap-[25px] lg:gap-[35px]">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.03fr_0.97fr] gap-[25px] lg:gap-[36px] lg:items-end">
+            <div className="flex flex-col gap-[25px]">
+              <h1
+                className="text-[32px] lg:text-[56px] font-semibold leading-none tracking-[-0.64px] lg:tracking-[-1.12px] md:w-[70%] lg:w-auto"
+                style={{ color: purple }}
+              >
+                Regain Control of Your Hair with
+                <span style={{ color: purpleMuted }}> AI-Powered Precision</span>
+              </h1>
+              <p
+                className="text-[18px] font-normal leading-[1.4] tracking-[0.18px] md:w-[70%] lg:w-auto lg:max-w-[560px]"
+                style={{ color: purpleSoft }}
+              >
+                The first mobile app designed for professional-grade alopecia tracking. Scan your
+                hair, discover effective treatments, and witness real progress through data.
+              </p>
+            </div>
+            <div className="w-full aspect-[343/300] lg:aspect-[560/520] overflow-hidden relative">
               <Image
                 src="/images/redesign/main_image_m.jpg"
                 alt="Hair scan preview"
                 fill
                 className="object-cover"
-                sizes="100vw"
+                sizes="(min-width: 1024px) 42vw, 100vw"
                 priority
               />
             </div>
-            <p
-              className="text-[16px] font-light leading-[1.4] tracking-[0.16px]"
-              style={{ color: purple }}
-            >
-              The world&apos;s most accurate AI-powered hair scanner and analysis tool for
-              professional-grade alopecia tracking.
-            </p>
-          </div>
-          <div className="flex gap-[10px]">
-            <a href="https://apps.apple.com/us/app/hairloss-ai-scan-hair-health/id6563141135">
-              <Image
-                src="/images/redesign/appstore.png"
-                alt="Download on the App Store"
-                width={120}
-                height={40}
-              />
-            </a>
-            <a href="https://play.google.com/store/apps/details?id=com.sampil.baldai">
-              <Image
-                src="/images/redesign/googleplay.png"
-                alt="Get it on Google Play"
-                width={120}
-                height={40}
-              />
-            </a>
+            <div className="flex flex-col gap-[20px] lg:max-w-[560px]">
+              <p
+                className="text-[16px] font-light leading-[1.4] tracking-[0.16px] md:w-[70%] lg:w-auto"
+                style={{ color: purple }}
+              >
+                The world&apos;s most accurate AI-powered hair scanner and analysis tool for
+                professional-grade alopecia tracking.
+              </p>
+              <div className="flex gap-[10px]">
+                <a href="https://apps.apple.com/us/app/hairloss-ai-scan-hair-health/id6563141135">
+                  <Image
+                    src="/images/redesign/appstore.png"
+                    alt="Download on the App Store"
+                    width={120}
+                    height={40}
+                  />
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.sampil.baldai">
+                  <Image
+                    src="/images/redesign/googleplay.png"
+                    alt="Get it on Google Play"
+                    width={120}
+                    height={40}
+                  />
+                </a>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Technology */}
-        <section id="technology" className="flex flex-col gap-[50px]">
-          <CategoryTag label="Technology" />
-          <div className="flex flex-col gap-[25px]">
+        <section id="technology" className="flex flex-col gap-[50px] md:gap-[55px]">
+          <div className="flex flex-col gap-[25px] md:max-w-[760px]">
+            <CategoryTag label="Technology" />
             <SectionTitle>Your Phone is Now a Professional Lab</SectionTitle>
             <SectionDescription>
               Our neural network is trained on thousands of real-life examples and takes care of the
@@ -495,10 +569,11 @@ export default function Home() {
             </SectionDescription>
           </div>
           <div className="flex flex-col gap-[25px]">
-            <div className="overflow-hidden" style={{ height: "calc((100vw - 30px) * 600 / 343)" }}>
+            <div className="overflow-hidden h-[calc((100vw-30px)*600/343)] md:h-[620px] lg:h-[650px] md:mx-[calc(50%-50vw)]">
               <div
                 ref={techCarousel.scrollRef}
-                className="overflow-x-auto snap-x snap-mandatory flex gap-[10px] -mx-[15px] px-[15px] scrollbar-hide h-full items-start"
+                onWheel={handleHorizontalCarouselWheel}
+                className="overflow-x-auto snap-x snap-mandatory flex gap-[10px] -mx-[15px] px-[15px] md:mx-0 md:px-[10px] scrollbar-hide h-full items-start"
               >
                 {techCards.map((card) => (
                   <FeatureCard
@@ -520,102 +595,121 @@ export default function Home() {
         </section>
 
         {/* Progress Tracking */}
-        <section id="progress" className="flex flex-col gap-[50px]">
-          <CategoryTag label="Progress Tracking" />
-          <div className="flex flex-col gap-[25px]">
+        <section id="progress" className="flex flex-col gap-[50px] md:gap-[55px]">
+          <div className="flex flex-col gap-[25px] md:max-w-[760px]">
+            <CategoryTag label="Progress Tracking" />
             <SectionTitle>Progress You Can Actually Measure</SectionTitle>
             <SectionDescription>
               Hair recovery is a marathon. We help you stay motivated by highlighting even the
               smallest improvements.
             </SectionDescription>
           </div>
-          <div className="flex flex-col gap-[20px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px]">
             <TrackingCard
               title="Hair Health Score (0–100)"
               description="Your personal hair health indexed, calculated based on hairline position, density and coverage."
               imageSrc="/images/redesign/stage_container.png"
               imageAlt="Hair Health Score"
-              aspect="345/401"
+              className="aspect-[345/401] md:aspect-[368/501]"
             />
             <TrackingCard
               title="Compare Scans"
               description="Easily notice even the smallest changes. Compare any two scans to see your progress over time."
               imageSrc="/images/redesign/compare.jpg"
+              imageSrcMd="/images/redesign/compare_md.jpg"
+              imageSrcMdWidth={1104}
+              imageSrcMdHeight={1050}
               imageAlt="Compare Scans"
-              aspect="345/501"
+              className="aspect-[345/501] md:aspect-[368/501]"
             />
-            <TrackingCard
-              title="Progress Tracker"
-              description="Track your journey from the first supplement to your first post-transplant haircut. See what made the difference. Easily spot patterns related to your treatment efficacy."
-              imageSrc="/images/redesign/progress_tracker_m.png"
-              imageAlt="Progress Tracker"
-              aspect="345/476"
-            />
+            <div className="md:col-span-2">
+              <TrackingCard
+                title="Progress Tracker"
+                description="Track your journey from the first supplement to your first post-transplant haircut. See what made the difference. Easily spot patterns related to your treatment efficacy."
+                imageSrc="/images/redesign/progress_tracker_m.png"
+                imageSrcMd="/images/redesign/progress_tracker_vector_md.svg"
+                imageSrcMdWidth={760}
+                imageSrcMdHeight={250}
+                imageAlt="Progress Tracker"
+                className="aspect-[345/476] md:aspect-auto"
+                imageClassName="md:mt-[24px]"
+              />
+            </div>
           </div>
         </section>
 
         {/* Calendar & Treatment */}
         <section id="calendar" className="flex flex-col items-center gap-[50px]">
-          <div className="w-full flex flex-col gap-[50px]">
+          <div className="w-full md:max-w-[980px] flex flex-col gap-[50px] md:gap-[55px]">
             <CategoryTag label="Calendar & Treatment" />
-            <div className="flex flex-col gap-[20px]">
-              <SectionTitle>A Routine That Never Fails</SectionTitle>
-              <p
-                className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
-                style={{ color: purpleSoft }}
-              >
-                <span className="font-semibold" style={{ color: purple }}>
-                  90% of treatment
-                </span>{" "}
-                success comes from consistency. We&apos;ve built a smart organizer specifically for
-                hair health management
-              </p>
-            </div>
-            <div className="flex flex-col gap-[25px]">
-              {routineItems.map((item) => (
-                <div key={item.title} className="flex items-center gap-[20px]">
-                  <div className="w-[35px] h-[35px] flex-shrink-0 relative">
-                    <Image src={item.icon} alt="" fill className="object-contain" sizes="35px" />
+            <div className="flex flex-col gap-[25px] md:gap-[40px]">
+              <div className="flex flex-col gap-[20px] md:max-w-[760px]">
+                <SectionTitle>A Routine That Never Fails</SectionTitle>
+                <p
+                  className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
+                  style={{ color: purpleSoft }}
+                >
+                  <span className="font-semibold" style={{ color: purple }}>
+                    90% of treatment
+                  </span>{" "}
+                  success comes from consistency. We&apos;ve built a smart organizer specifically
+                  for hair health management
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-[25px] md:gap-y-[36px] gap-x-[25px] md:gap-x-[56px]">
+                {routineItems.map((item) => (
+                  <div key={item.title} className="flex items-start gap-[20px] md:gap-[16px]">
+                    <div className="w-[35px] h-[35px] flex-shrink-0 relative">
+                      <Image src={item.icon} alt="" fill className="object-contain" sizes="35px" />
+                    </div>
+                    <div className="flex flex-col gap-[5px]">
+                      <h3
+                        className="text-[18px] font-medium tracking-[0.18px]"
+                        style={{ color: purple }}
+                      >
+                        {item.title}
+                      </h3>
+                      <p
+                        className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
+                        style={{ color: purpleSoft }}
+                      >
+                        {item.desc}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-[5px]">
-                    <h3
-                      className="text-[18px] font-medium tracking-[0.18px]"
-                      style={{ color: purple }}
-                    >
-                      {item.title}
-                    </h3>
-                    <p
-                      className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
-                      style={{ color: purpleSoft }}
-                    >
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-          <PrimaryButton
-            icon={<Image src="/images/redesign/plus_icon.png" alt="" width={19} height={19} />}
-          >
-            Build Your Custom Plan
-          </PrimaryButton>
-          <div className="w-full aspect-[343/400] overflow-hidden relative">
+          <div className="w-full md:max-w-[960px] aspect-[343/400] md:aspect-[960/540] overflow-hidden relative">
             <Image
               src="/images/redesign/routine.jpg"
               alt="Treatment calendar"
               fill
-              className="object-cover"
+              className="object-cover md:hidden"
               sizes="calc(100vw - 30px)"
             />
+            <div
+              className="hidden md:flex absolute inset-[22px] lg:inset-[26px] items-center justify-center"
+              style={{ background: purpleSubtle }}
+            >
+              <Image
+                src="/images/redesign/routine_md.jpg"
+                alt="Treatment calendar"
+                width={842}
+                height={914}
+                className="h-[80%] w-auto object-contain"
+                sizes="(min-width: 1024px) 760px, 86vw"
+              />
+            </div>
           </div>
         </section>
 
         {/* Testimonials */}
-        <section id="testimonials" className="flex flex-col items-center gap-[50px]">
+        <section id="testimonials" className="flex flex-col items-center gap-[50px] md:gap-[55px]">
           <div className="w-full flex flex-col gap-[50px]">
-            <CategoryTag label="Testimonials" />
-            <div className="flex flex-col gap-[25px]">
+            <div className="flex flex-col gap-[25px] md:max-w-[760px]">
+              <CategoryTag label="Testimonials" />
               <SectionTitle>Trusted by 50,000+ men From over 20 countries</SectionTitle>
               <SectionDescription>
                 Verified users share measurable changes based on consistent scans and objective hair
@@ -625,12 +719,17 @@ export default function Home() {
             <div className="flex flex-col gap-[25px]">
               <div
                 ref={reviewsCarousel.scrollRef}
-                className="overflow-x-auto snap-x snap-mandatory flex gap-[16px] -mx-[15px] px-[15px] scrollbar-hide"
+                onWheel={handleHorizontalCarouselWheel}
+                onMouseEnter={() => setIsReviewsAutoplayPaused(true)}
+                onMouseLeave={() => setIsReviewsAutoplayPaused(false)}
+                onTouchStart={() => setIsReviewsAutoplayPaused(true)}
+                onTouchEnd={() => setIsReviewsAutoplayPaused(false)}
+                className="overflow-x-auto snap-x snap-mandatory flex gap-[16px] -mx-[15px] px-[15px] md:mx-0 md:px-[16px] scrollbar-hide"
               >
                 {testimonials.map((t, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 w-[283px] h-[350px] flex flex-col justify-between p-[25px] snap-center"
+                    className="flex-shrink-0 w-[283px] md:w-[320px] h-[350px] flex flex-col justify-between p-[25px] snap-center"
                     style={{ background: purpleSubtle }}
                   >
                     <p
@@ -678,7 +777,7 @@ export default function Home() {
             >
               Brands We Love
             </h3>
-            <div className="grid grid-cols-2 gap-[16px]">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-[16px]">
               {brands.map((brand) => (
                 <div
                   key={brand.name}
@@ -707,8 +806,8 @@ export default function Home() {
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="flex flex-col items-center gap-[50px]">
-          <div className="w-full flex flex-col gap-[50px]">
+        <section id="faq" className="flex flex-col items-center gap-[50px] md:gap-[55px]">
+          <div className="w-full flex flex-col gap-[50px] md:max-w-[980px]">
             <CategoryTag label="Frequently Asked Questions" />
             <div className="flex flex-col gap-[20px]">
               <SectionTitle>Frequently Asked Questions</SectionTitle>
@@ -717,14 +816,14 @@ export default function Home() {
               </SectionDescription>
             </div>
           </div>
-          <div className="w-full flex flex-col gap-[5px]">
+          <div className="w-full md:max-w-[980px] flex flex-col gap-[5px]">
             {faqItems.slice(0, showAllFaq ? faqItems.length : FAQ_VISIBLE_COUNT).map((item, i) => {
               const isOpen = openFaq === i
               return (
                 <div key={i}>
                   <button
                     type="button"
-                    className="w-full flex items-start justify-between p-[15px] text-left transition-colors duration-300"
+                    className="w-full flex items-start justify-between p-[15px] md:p-[20px] text-left transition-colors duration-300"
                     style={{ background: isOpen ? purple : purpleSubtle }}
                     onClick={() => setOpenFaq(isOpen ? -1 : i)}
                   >
@@ -750,7 +849,7 @@ export default function Home() {
                     }}
                   >
                     <p
-                      className="px-[15px] pb-[15px] text-[16px] font-normal leading-[1.6] tracking-[0.16px]"
+                      className="px-[15px] md:px-[20px] pb-[15px] md:pb-[20px] text-[16px] font-normal leading-[1.6] tracking-[0.16px]"
                       style={{ color: "rgba(255,255,255,0.75)" }}
                     >
                       {item.answer}
@@ -776,7 +875,7 @@ export default function Home() {
               </button>
             )}
           </div>
-          <div className="w-full flex flex-col gap-[25px]">
+          <div className="w-full md:max-w-[980px] flex flex-col md:flex-row md:items-center md:justify-between gap-[25px]">
             <div className="flex flex-col">
               <span className="text-[16px] font-medium tracking-[0.16px]" style={{ color: purple }}>
                 Still have questions?
@@ -790,7 +889,7 @@ export default function Home() {
             </div>
             <a
               href="mailto:hello@hairlossai.app"
-              className="flex items-center justify-center gap-[10px] px-[25px] py-[16px] rounded-[12px] border text-[16px] font-medium tracking-[0.16px] whitespace-nowrap w-[70vw] self-start"
+              className="flex items-center justify-center gap-[10px] px-[25px] py-[16px] rounded-[12px] border text-[16px] font-medium tracking-[0.16px] whitespace-nowrap w-[70vw] md:w-auto self-start"
               style={{ borderColor: purpleBorder, color: purple }}
             >
               Contact us
@@ -801,72 +900,76 @@ export default function Home() {
       </main>
 
       {/* Start Your Journey CTA */}
-      <section className="mt-[50px] relative">
-        <div
-          className="w-[calc(100vw-30px)] mx-auto aspect-[275/361] px-[35px] pt-[35px] flex flex-col gap-[50px]"
-          style={{ background: purple }}
-        >
-          <div className="flex items-center gap-[5px]">
-            <div className="w-[12px] h-[12px] rounded-full" style={{ background: "#ceb1ff" }} />
-            <span
-              className="text-[16px] font-medium tracking-[0.16px]"
-              style={{ color: "#ceb1ff" }}
-            >
-              Download app
-            </span>
+      <section className="mt-[50px] md:mt-[70px] px-[15px] md:px-6 lg:px-8">
+        <div className="max-w-[1240px] mx-auto grid grid-cols-1 md:grid-cols-[340px_1fr] gap-[16px] md:gap-0">
+          <div
+            className="order-1 md:order-2 aspect-[275/361] md:aspect-auto px-[35px] pt-[35px] pb-[30px] md:pt-[50px] md:pb-[50px] md:px-[25px] flex flex-col gap-[50px]"
+            style={{ background: purple }}
+          >
+            <div className="flex items-center gap-[5px]">
+              <div className="w-[12px] h-[12px] rounded-full" style={{ background: "#ceb1ff" }} />
+              <span
+                className="text-[16px] font-medium tracking-[0.16px]"
+                style={{ color: "#ceb1ff" }}
+              >
+                Download app
+              </span>
+            </div>
+            <div className="flex flex-col gap-[20px] text-white">
+              <h2 className="text-[32px] font-semibold leading-none tracking-[-0.64px]">
+                Start Your Journey
+                <br />
+                To Fuller Hair Today
+              </h2>
+              <p className="text-[18px] font-normal leading-[1.4] tracking-[0.18px] md:max-w-[640px]">
+                Unlimited scans and analysis with subscription. Receive a precise analysis and a
+                personalized treatment plan in under 60 seconds,
+              </p>
+            </div>
+            <div className="flex gap-[10px]">
+              <a href="https://apps.apple.com/us/app/hairloss-ai-scan-hair-health/id6563141135">
+                <Image
+                  src="/images/redesign/appstore_light.png"
+                  alt="Download on the App Store"
+                  width={120}
+                  height={40}
+                />
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.sampil.baldai">
+                <Image
+                  src="/images/redesign/googleplay_light.png"
+                  alt="Get it on Google Play"
+                  width={120}
+                  height={40}
+                />
+              </a>
+            </div>
           </div>
-          <div className="flex flex-col gap-[20px] text-white">
-            <h2 className="text-[32px] font-semibold leading-none tracking-[-0.64px]">
-              Start Your Journey To Fuller Hair Today
-            </h2>
-            <p className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]">
-              Unlimited scans and analysis with subscription. Receive a precise analysis and a
-              personalized treatment plan in under 60 seconds,
-            </p>
-          </div>
-          <div className="flex gap-[10px]">
-            <a href="https://apps.apple.com/us/app/hairloss-ai-scan-hair-health/id6563141135">
+          <div
+            className="order-2 md:order-1 aspect-[345/400] md:aspect-auto md:min-h-[420px] relative overflow-x-clip overflow-y-visible md:overflow-visible md:[clip-path:inset(-1000px_-1000px_0_0)]"
+            style={{ background: purpleSubtle }}
+          >
+            <div className="absolute bottom-0 left-[-15%] right-[-15%] md:bottom-[-8%] md:left-[-32%] md:right-[-26%] overflow-visible flex items-end">
               <Image
-                src="/images/redesign/appstore_light.png"
-                alt="Download on the App Store"
-                width={120}
-                height={40}
+                src="/images/redesign/hand_holding.png"
+                alt="App on phone"
+                width={562}
+                height={571}
+                className="w-[130%] md:w-[90%] h-auto"
+                sizes="(min-width: 768px) 42vw, calc((100vw - 30px) * 1.3)"
               />
-            </a>
-            <a href="https://play.google.com/store/apps/details?id=com.sampil.baldai">
-              <Image
-                src="/images/redesign/googleplay_light.png"
-                alt="Get it on Google Play"
-                width={120}
-                height={40}
-              />
-            </a>
-          </div>
-        </div>
-        <div
-          className="w-[calc(100vw-30px)] mx-auto aspect-[345/400] relative overflow-x-clip overflow-y-visible"
-          style={{ background: purpleSubtle }}
-        >
-          <div className="absolute bottom-0 left-[-15%] right-[-15%] overflow-visible flex items-end">
-            <Image
-              src="/images/redesign/hand_holding.png"
-              alt="App on phone"
-              width={562}
-              height={571}
-              className="w-[130%] h-auto"
-              sizes="calc((100vw - 30px) * 1.3)"
-            />
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="px-[15px] flex flex-col gap-[50px] mt-[150px] pb-[40px]">
+      <footer className="px-[15px] md:px-6 lg:px-8 max-w-[1240px] mx-auto flex flex-col gap-[50px] mt-[150px] pb-[40px]">
         <div
           className="flex flex-col gap-[50px] pt-[25px]"
           style={{ borderTop: `1px solid ${purpleBorder}` }}
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between md:gap-[25px]">
             <h3
               className="text-[32px] font-semibold leading-none tracking-[-0.64px] w-[242px]"
               style={{ color: purple }}
@@ -882,15 +985,17 @@ export default function Home() {
               Back To Top <span style={{ color: "rgba(56,28,89,0.25)" }}>↑</span>
             </button>
           </div>
-          <PrimaryButton
-            outline
-            icon={<Image src="/images/redesign/arrow_icon.png" alt="" width={16} height={19} />}
-          >
-            Subscribe to our newsletter
-          </PrimaryButton>
+          <div className="md:self-start">
+            <PrimaryButton
+              outline
+              icon={<Image src="/images/redesign/arrow_icon.png" alt="" width={16} height={19} />}
+            >
+              Subscribe to our newsletter
+            </PrimaryButton>
+          </div>
         </div>
         <div
-          className="flex flex-col gap-[25px] text-[16px] font-normal tracking-[0.16px]"
+          className="grid grid-cols-1 md:grid-cols-3 gap-[25px] text-[16px] font-normal tracking-[0.16px]"
           style={{ color: purple }}
         >
           <div className="leading-normal">
@@ -905,21 +1010,21 @@ export default function Home() {
             <p>500 Howard St, South of Market CA</p>
             <p>94105 San Francisco, USA</p>
           </div>
-        </div>
-        <div
-          className="flex gap-[25px] text-[16px] font-normal tracking-[0.16px]"
-          style={{ color: purple }}
-        >
-          <div className="flex-1 flex flex-col gap-[5px]">
-            <Link href="#">Atlas DNA Kit</Link>
-            <Link href="#">Technology</Link>
-            <Link href="#">Tracker</Link>
-            <Link href="#">Treatments</Link>
-          </div>
-          <div className="flex-1 flex flex-col gap-[5px]">
-            <Link href="#">Testimonials</Link>
-            <Link href="#">FAQ</Link>
-            <Link href="#">Blog</Link>
+          <div
+            className="flex gap-[25px] text-[16px] font-normal tracking-[0.16px]"
+            style={{ color: purple }}
+          >
+            <div className="flex-1 flex flex-col gap-[5px]">
+              <Link href="#">Atlas DNA Kit</Link>
+              <Link href="#">Technology</Link>
+              <Link href="#">Tracker</Link>
+              <Link href="#">Treatments</Link>
+            </div>
+            <div className="flex-1 flex flex-col gap-[5px]">
+              <Link href="#">Testimonials</Link>
+              <Link href="#">FAQ</Link>
+              <Link href="#">Blog</Link>
+            </div>
           </div>
         </div>
         <div
