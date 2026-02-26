@@ -215,6 +215,9 @@ function TrackingCard({
   imageSrcMd,
   imageSrcMdWidth,
   imageSrcMdHeight,
+  imageSrcLg,
+  imageSrcLgWidth,
+  imageSrcLgHeight,
   imageAlt,
   className,
   imageClassName,
@@ -225,16 +228,21 @@ function TrackingCard({
   imageSrcMd?: string
   imageSrcMdWidth?: number
   imageSrcMdHeight?: number
+  imageSrcLg?: string
+  imageSrcLgWidth?: number
+  imageSrcLgHeight?: number
   imageAlt: string
   className?: string
   imageClassName?: string
 }) {
+  const hideMobile = imageSrcMd ? "md:hidden" : imageSrcLg ? "lg:hidden" : ""
+  const hideMd = imageSrcLg ? "lg:hidden" : ""
   return (
     <div
       className={`w-full flex flex-col justify-between overflow-hidden ${className ?? ""}`}
       style={{ background: purpleSubtle }}
     >
-      <div className="px-[35px] pt-[35px] pb-[15px] flex flex-col gap-[5px]">
+      <div className="px-[35px] lg:px-[50px] pt-[35px] lg:pt-[50px] pb-[15px] flex flex-col gap-[5px]">
         <h3 className="text-[18px] font-medium tracking-[0.18px]" style={{ color: purple }}>
           {title}
         </h3>
@@ -250,7 +258,7 @@ function TrackingCard({
         alt={imageAlt}
         width={690}
         height={900}
-        className={`w-full h-auto mt-auto ${imageSrcMd ? "md:hidden" : ""} ${imageClassName ?? ""}`}
+        className={`w-full h-auto mt-auto ${hideMobile} ${imageClassName ?? ""}`}
         sizes="(min-width: 768px) 44vw, calc(100vw - 30px)"
       />
       {imageSrcMd && (
@@ -259,8 +267,18 @@ function TrackingCard({
           alt={imageAlt}
           width={imageSrcMdWidth ?? 1104}
           height={imageSrcMdHeight ?? 1050}
-          className={`hidden md:block w-full h-auto mt-auto ${imageClassName ?? ""}`}
-          sizes="(min-width: 768px) 44vw, calc(100vw - 30px)"
+          className={`hidden md:block ${hideMd} w-full h-auto mt-auto ${imageClassName ?? ""}`}
+          sizes="(min-width: 1024px) 90vw, 44vw"
+        />
+      )}
+      {imageSrcLg && (
+        <Image
+          src={imageSrcLg}
+          alt={imageAlt}
+          width={imageSrcLgWidth ?? 1230}
+          height={imageSrcLgHeight ?? 224}
+          className={`hidden lg:block w-full h-auto mt-auto lg:px-[50px] ${imageClassName ?? ""}`}
+          sizes="90vw"
         />
       )}
     </div>
@@ -644,15 +662,19 @@ export default function Home() {
         </section>
 
         {/* Progress Tracking */}
-        <section id="progress" className="flex flex-col gap-[50px] md:gap-[55px]">
-          <div className="flex flex-col gap-[25px] md:max-w-[760px] lg:max-w-none">
+        <section id="progress" className="flex flex-col gap-[50px] md:gap-[55px] lg:gap-[100px]">
+          <div className="flex flex-col gap-[25px] lg:gap-[100px] md:max-w-[760px] lg:max-w-none">
             <CategoryTag label="Progress Tracking" />
             <div className="lg:grid lg:grid-cols-[0.5fr_0.5fr] lg:items-start lg:gap-[30px]">
-              <SectionTitle>Progress You Can Actually Measure</SectionTitle>
+              <SectionTitle>
+                Progress You Can
+                <br className="hidden lg:inline" /> Actually Measure
+              </SectionTitle>
               <div className="lg:pt-[5px]">
                 <SectionDescription>
-                  Hair recovery is a marathon. We help you stay motivated by highlighting even the
-                  smallest improvements.
+                  Hair recovery is a marathon. We help you stay
+                  <br className="hidden lg:inline" /> motivated by highlighting even the smallest
+                  <br className="hidden lg:inline" /> improvements.
                 </SectionDescription>
               </div>
             </div>
@@ -663,7 +685,8 @@ export default function Home() {
               description="Your personal hair health indexed, calculated based on hairline position, density and coverage."
               imageSrc="/images/redesign/stage_container.png"
               imageAlt="Hair Health Score"
-              className="aspect-[345/401] md:aspect-[368/501]"
+              className="aspect-[345/401] md:aspect-[368/501] lg:aspect-[657/500]"
+              imageClassName="lg:px-[100px]"
             />
             <TrackingCard
               title="Compare Scans"
@@ -672,8 +695,11 @@ export default function Home() {
               imageSrcMd="/images/redesign/compare_md.jpg"
               imageSrcMdWidth={1104}
               imageSrcMdHeight={1050}
+              imageSrcLg="/images/redesign/compare_lg.png"
+              imageSrcLgWidth={1314}
+              imageSrcLgHeight={1000}
               imageAlt="Compare Scans"
-              className="aspect-[345/501] md:aspect-[368/501]"
+              className="aspect-[345/501] md:aspect-[368/501] lg:aspect-[657/500]"
             />
             <div className="md:col-span-2">
               <TrackingCard
@@ -683,9 +709,12 @@ export default function Home() {
                 imageSrcMd="/images/redesign/progress_tracker_vector_md.svg"
                 imageSrcMdWidth={760}
                 imageSrcMdHeight={250}
+                imageSrcLg="/images/redesign/progress_tracker_vector_lg.svg"
+                imageSrcLgWidth={1230}
+                imageSrcLgHeight={224}
                 imageAlt="Progress Tracker"
-                className="aspect-[345/476] md:aspect-auto lg:aspect-[1230/224]"
-                imageClassName="md:mt-[24px]"
+                className="aspect-[345/476] md:aspect-auto lg:aspect-[1328/500]"
+                imageClassName="md:mt-[24px] lg:mt-0 lg:pb-[50px]"
               />
             </div>
           </div>
