@@ -723,13 +723,18 @@ export default function Home() {
         {/* Calendar & Treatment */}
         <section
           id="calendar"
-          className="flex flex-col items-center gap-[50px] lg:gap-0 lg:grid lg:grid-cols-[0.34fr_0.66fr] lg:items-center lg:w-full"
+          className="flex flex-col items-center gap-[50px] lg:gap-[140px] lg:!mt-[200px] lg:grid lg:grid-cols-[auto_1fr] lg:items-start lg:w-full"
         >
-          <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col gap-[50px] md:gap-[55px] lg:order-2">
+          <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col gap-[50px] md:gap-[55px] lg:gap-[100px] lg:order-2">
             <CategoryTag label="Calendar & Treatment" />
             <div className="flex flex-col gap-[25px] md:gap-[40px]">
               <div className="flex flex-col gap-[20px] md:max-w-[760px]">
-                <SectionTitle>A Routine That Never Fails</SectionTitle>
+                <h2
+                  className="text-[32px] lg:text-[48px] font-semibold leading-none tracking-[-0.64px] lg:tracking-[-1.12px]"
+                  style={{ color: purple }}
+                >
+                  A Routine That Never Fails
+                </h2>
                 <p
                   className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
                   style={{ color: purpleSoft }}
@@ -741,9 +746,12 @@ export default function Home() {
                   for hair health management
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-[25px] md:gap-y-[36px] gap-x-[25px] md:gap-x-[56px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-y-[25px] md:gap-y-[36px] gap-x-[25px] md:gap-x-[56px]">
                 {routineItems.map((item) => (
-                  <div key={item.title} className="flex items-start gap-[20px] md:gap-[16px]">
+                  <div
+                    key={item.title}
+                    className="flex items-start lg:items-center gap-[20px] md:gap-[16px] lg:gap-[25px]"
+                  >
                     <div className="w-[35px] h-[35px] flex-shrink-0 relative">
                       <Image src={item.icon} alt="" fill className="object-contain" sizes="35px" />
                     </div>
@@ -766,7 +774,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="w-full md:max-w-[960px] lg:max-w-none aspect-[343/400] md:aspect-[960/540] lg:aspect-[360/520] overflow-hidden relative lg:order-1">
+          <div className="w-full md:max-w-[960px] lg:max-w-none lg:w-[430px] aspect-[343/400] md:aspect-[960/540] lg:aspect-[430/700] overflow-hidden relative lg:order-1">
             <Image
               src="/images/redesign/routine.jpg"
               alt="Treatment calendar"
@@ -775,7 +783,7 @@ export default function Home() {
               sizes="calc(100vw - 30px)"
             />
             <div
-              className="hidden md:flex absolute inset-[22px] lg:inset-0 items-center justify-center"
+              className="hidden md:flex absolute inset-[22px] lg:inset-0 lg:px-[50px] items-center justify-center"
               style={{ background: purpleSubtle }}
             >
               <Image
@@ -783,8 +791,8 @@ export default function Home() {
                 alt="Treatment calendar"
                 width={842}
                 height={914}
-                className="h-[80%] lg:h-[74%] w-auto object-contain"
-                sizes="(min-width: 1024px) 760px, 86vw"
+                className="h-[80%] lg:h-auto lg:w-full w-auto object-contain"
+                sizes="(min-width: 1024px) 330px, 86vw"
               />
             </div>
           </div>
