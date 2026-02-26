@@ -182,7 +182,7 @@ function FeatureCard({
 }) {
   return (
     <div
-      className="flex-shrink-0 aspect-[343/600] w-[calc(100vw-30px)] md:w-[340px] lg:w-full lg:aspect-[1/1.18] flex flex-col justify-between snap-center overflow-hidden"
+      className="flex-shrink-0 aspect-[343/600] w-[calc(100vw-30px)] md:w-[340px] lg:w-full lg:aspect-[430/616] flex flex-col justify-between snap-center overflow-hidden"
       style={{ background: purpleSubtle }}
     >
       <div className="px-[35px] pt-[35px] pb-[15px] flex flex-col gap-[5px]">
@@ -201,7 +201,7 @@ function FeatureCard({
         alt={imageAlt}
         width={686}
         height={900}
-        className="w-full h-auto mt-auto"
+        className="w-full h-auto mt-auto lg:px-[35px]"
         sizes="(min-width: 1024px) 360px, (min-width: 768px) 340px, calc(100vw - 30px)"
       />
     </div>
@@ -583,12 +583,22 @@ export default function Home() {
 
         {/* Technology */}
         <section id="technology" className="flex flex-col gap-[50px] md:gap-[55px]">
-          <div className="flex flex-col gap-[25px] md:max-w-[760px] lg:max-w-[430px] lg:mx-auto">
-            <CategoryTag label="Technology" />
-            <SectionTitle>Your Phone is Now a Professional Lab</SectionTitle>
+          <div className="flex flex-col gap-[25px] md:max-w-[760px] lg:max-w-none">
+            <div className="flex flex-col gap-[25px] lg:flex-row lg:items-start lg:gap-[10px]">
+              <div className="lg:w-[calc(33.33%-10px*2/3)] lg:flex-shrink-0">
+                <CategoryTag label="Technology" />
+              </div>
+              <SectionTitle>
+                Your Phone is
+                <br className="hidden lg:inline" /> Now a Professional Lab
+              </SectionTitle>
+            </div>
             <SectionDescription>
-              Our neural network is trained on thousands of real-life examples and takes care of the
-              hardest part - objective evaluation. No more guessing while looking in the mirror.
+              <span className="lg:hidden">
+                Our neural network is trained on thousands of real-life examples and takes care of
+                the hardest part - objective evaluation. No more guessing while looking in the
+                mirror.
+              </span>
             </SectionDescription>
           </div>
           <div className="flex flex-col gap-[25px]">
@@ -598,6 +608,21 @@ export default function Home() {
                 onWheel={handleHorizontalCarouselWheel}
                 className="overflow-x-auto snap-x snap-mandatory flex gap-[10px] -mx-[15px] px-[15px] md:mx-0 md:px-[10px] scrollbar-hide h-full items-start lg:grid lg:grid-cols-3 lg:auto-rows-fr lg:gap-[10px] lg:overflow-visible lg:h-auto"
               >
+                <div className="hidden lg:flex flex-col justify-start gap-[20px] pr-[80px]">
+                  <p
+                    className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
+                    style={{ color: purpleSoft }}
+                  >
+                    Our neural network is trained on thousands of real-life examples and takes care
+                    of the hardest part - objective evaluation.
+                  </p>
+                  <p
+                    className="text-[18px] font-semibold leading-[1.4] tracking-[0.18px]"
+                    style={{ color: purple }}
+                  >
+                    No more guessing while looking in the mirror.
+                  </p>
+                </div>
                 {techCards.map((card) => (
                   <FeatureCard
                     key={card.title}
