@@ -27,7 +27,7 @@ function CategoryTag({ label }: { label: string }) {
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <h2
-      className="text-[32px] font-semibold leading-none tracking-[-0.64px]"
+      className="text-[32px] lg:text-[48px] font-semibold leading-none tracking-[-0.64px] lg:tracking-[-1.12px]"
       style={{ color: purple }}
     >
       {children}
@@ -43,29 +43,6 @@ function SectionDescription({ children }: { children: React.ReactNode }) {
     >
       {children}
     </p>
-  )
-}
-
-function IconPlusCircle() {
-  return (
-    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="9.5" cy="9.5" r="9" stroke="white" strokeWidth="1" />
-      <path d="M9.5 5.5V13.5M5.5 9.5H13.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function IconArrowUpRight() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M4.5 11.5L11.5 4.5M11.5 4.5H5.5M11.5 4.5V10.5"
-        stroke={purple}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   )
 }
 
@@ -369,6 +346,7 @@ const menuItems: { label: string; target: string; type: "scroll" | "link"; muted
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(-1)
   const [showAllFaq, setShowAllFaq] = useState(false)
+  const [showAllReviews, setShowAllReviews] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isReviewsAutoplayPaused, setIsReviewsAutoplayPaused] = useState(false)
   const techCarousel = useCarouselTracker(techCards.length)
@@ -723,7 +701,7 @@ export default function Home() {
         {/* Calendar & Treatment */}
         <section
           id="calendar"
-          className="flex flex-col items-center gap-[50px] lg:gap-[140px] lg:!mt-[200px] lg:grid lg:grid-cols-[auto_1fr] lg:items-start lg:w-full"
+          className="flex flex-col items-center gap-[50px] lg:gap-[140px] lg:grid lg:grid-cols-[auto_1fr] lg:items-start lg:w-full"
         >
           <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col gap-[50px] md:gap-[55px] lg:gap-[100px] lg:order-2">
             <CategoryTag label="Calendar & Treatment" />
@@ -801,19 +779,24 @@ export default function Home() {
         {/* Testimonials */}
         <section id="testimonials" className="flex flex-col items-center gap-[50px] md:gap-[55px]">
           <div className="w-full flex flex-col gap-[50px]">
-            <div className="flex flex-col gap-[25px] md:max-w-[760px] lg:max-w-none">
+            <div className="flex flex-col gap-[25px] lg:gap-[100px] md:max-w-[760px] lg:max-w-none">
               <CategoryTag label="Testimonials" />
               <div className="lg:grid lg:grid-cols-[0.5fr_0.5fr] lg:items-start lg:gap-[30px]">
-                <SectionTitle>Trusted by 50,000+ men From over 20 countries</SectionTitle>
+                <SectionTitle>
+                  Trusted by 50,000+ men
+                  <br className="hidden lg:inline" /> From over 20 countries
+                </SectionTitle>
                 <div className="lg:pt-[5px]">
                   <SectionDescription>
-                    Verified users share measurable changes based on consistent scans and objective
-                    hair health scores
+                    Verified users share measurable changes based on
+                    <br className="hidden lg:inline" /> consistent scans and objective hair health
+                    scores
                   </SectionDescription>
                 </div>
               </div>
             </div>
             <div className="flex flex-col gap-[25px]">
+              {/* Mobile/tablet: horizontal carousel */}
               <div
                 ref={reviewsCarousel.scrollRef}
                 onWheel={handleHorizontalCarouselWheel}
@@ -821,12 +804,12 @@ export default function Home() {
                 onMouseLeave={() => setIsReviewsAutoplayPaused(false)}
                 onTouchStart={() => setIsReviewsAutoplayPaused(true)}
                 onTouchEnd={() => setIsReviewsAutoplayPaused(false)}
-                className="overflow-x-auto snap-x snap-mandatory flex gap-[16px] -mx-[15px] px-[15px] md:mx-0 md:px-[16px] scrollbar-hide lg:grid lg:grid-cols-5 lg:gap-[12px] lg:overflow-visible lg:px-0 lg:mx-0"
+                className="overflow-x-auto snap-x snap-mandatory flex gap-[16px] -mx-[15px] px-[15px] md:mx-0 md:px-[16px] scrollbar-hide lg:hidden"
               >
                 {testimonials.map((t, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 w-[283px] md:w-[320px] lg:w-auto h-[350px] lg:h-auto lg:min-h-[250px] flex flex-col justify-between p-[25px] snap-center"
+                    className="flex-shrink-0 w-[283px] md:w-[320px] h-[350px] flex flex-col justify-between p-[25px] snap-center"
                     style={{ background: purpleSubtle }}
                   >
                     <p
@@ -857,6 +840,67 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+
+              {/* LG: grid with collapsible second row */}
+              <div className="hidden lg:block relative">
+                <div
+                  className="grid grid-cols-4 gap-[12px] overflow-hidden transition-all duration-500 ease-in-out"
+                  style={{ maxHeight: showAllReviews ? 1200 : 380 }}
+                >
+                  {testimonials.map((t, i) => (
+                    <div
+                      key={i}
+                      className="min-h-[250px] flex flex-col justify-between p-[25px]"
+                      style={{ background: purpleSubtle }}
+                    >
+                      <p
+                        className="text-[14px] font-normal leading-[1.6] tracking-[0.14px]"
+                        style={{ color: purpleSoft }}
+                      >
+                        {t.text}
+                      </p>
+                      <div className="flex flex-col gap-[15px]">
+                        <div className="flex gap-0 text-[18px]" style={{ color: purple }}>
+                          {"★★★★★"}
+                        </div>
+                        <div className="flex flex-col gap-[5px]">
+                          <span
+                            className="text-[16px] font-medium tracking-[0.16px]"
+                            style={{ color: purple }}
+                          >
+                            {t.name}
+                          </span>
+                          <span
+                            className="text-[14px] font-normal tracking-[0.14px]"
+                            style={{ color: purpleSoft }}
+                          >
+                            {t.location} · {t.platform}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {!showAllReviews && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-[120px] flex items-end justify-center pb-[20px] pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%)",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className="pointer-events-auto flex items-center justify-center gap-[5px] px-[25px] py-[16px] rounded-[12px] text-[16px] font-medium tracking-[0.16px] text-white w-[256px]"
+                      style={{ background: purple, boxShadow: "0px 8px 21px rgba(56,28,89,0.25)" }}
+                      onClick={() => setShowAllReviews(true)}
+                    >
+                      View all reviews
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <ProgressDots
                 count={testimonials.length}
                 active={reviewsCarousel.activeIndex}
@@ -865,7 +909,9 @@ export default function Home() {
               />
             </div>
           </div>
-          <PrimaryButton>View all reviews</PrimaryButton>
+          <div className="lg:hidden">
+            <PrimaryButton>View all reviews</PrimaryButton>
+          </div>
 
           {/* Brands We Love */}
           <div className="w-full flex flex-col gap-[25px]">
@@ -906,18 +952,119 @@ export default function Home() {
         {/* FAQ */}
         <section
           id="faq"
-          className="flex flex-col items-center gap-[50px] md:gap-[55px] lg:grid lg:grid-cols-[0.32fr_0.68fr] lg:items-start lg:w-full"
+          className="flex flex-col items-center gap-[50px] md:gap-[55px] lg:grid lg:grid-cols-[0.32fr_0.68fr] lg:gap-x-[40px] lg:gap-y-[0px] lg:items-start lg:w-full"
         >
-          <div className="w-full flex flex-col gap-[50px] md:max-w-[980px] lg:max-w-none lg:col-span-2 lg:items-center">
+          {/* Mobile/tablet header */}
+          <div className="w-full flex flex-col gap-[50px] md:max-w-[980px] lg:hidden">
             <CategoryTag label="Frequently Asked Questions" />
-            <div className="flex flex-col gap-[20px] lg:items-center lg:text-center lg:max-w-[540px]">
+            <div className="flex flex-col gap-[20px]">
               <SectionTitle>Frequently Asked Questions</SectionTitle>
               <SectionDescription>
                 Clear answers about scanning, analysis, progress tracking, and data usage
               </SectionDescription>
             </div>
           </div>
-          <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col gap-[5px] lg:col-start-2 lg:row-start-2">
+
+          {/* LG left column: tag + description + still have questions */}
+          <div className="hidden lg:flex flex-col lg:col-start-1 lg:row-start-1 lg:row-span-2 lg:self-stretch">
+            <CategoryTag label="Frequently Asked Questions" />
+            <div className="mt-[100px]">
+              <SectionDescription>
+                Clear answers about scanning, analysis, progress tracking, and data usage
+              </SectionDescription>
+            </div>
+            <div className="mt-auto">
+              <div className="flex flex-col gap-[25px]">
+                <div className="flex flex-col">
+                  <span
+                    className="text-[16px] font-medium tracking-[0.16px]"
+                    style={{ color: purple }}
+                  >
+                    Still have questions?
+                  </span>
+                  <p
+                    className="text-[14px] font-normal leading-[1.5] tracking-[0.14px]"
+                    style={{ color: purpleMuted }}
+                  >
+                    Please connect with our support team, we&apos;re happy to help!
+                  </p>
+                </div>
+                <a
+                  href="mailto:hello@hairlossai.app"
+                  className="flex items-center justify-center gap-[10px] px-[25px] py-[16px] rounded-[12px] border text-[16px] font-medium tracking-[0.16px] whitespace-nowrap w-auto self-start"
+                  style={{ borderColor: purpleBorder, color: purple }}
+                >
+                  Contact us
+                  <Image src="/images/redesign/arrow_icon.png" alt="" width={16} height={19} />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* LG right column: title + FAQ items */}
+          <div className="hidden lg:flex flex-col gap-[50px] lg:col-start-2 lg:row-start-1 lg:row-span-2">
+            <SectionTitle>Frequently Asked Questions</SectionTitle>
+            <div className="flex flex-col gap-[5px]">
+              {faqItems
+                .slice(0, showAllFaq ? faqItems.length : FAQ_VISIBLE_COUNT)
+                .map((item, i) => {
+                  const isOpen = openFaq === i
+                  return (
+                    <div key={i}>
+                      <button
+                        type="button"
+                        className="w-full flex items-start justify-between p-[15px] md:p-[20px] text-left transition-colors duration-300"
+                        style={{ background: isOpen ? purple : purpleSubtle }}
+                        onClick={() => setOpenFaq(isOpen ? -1 : i)}
+                      >
+                        <span
+                          className="text-[16px] font-medium tracking-[0.16px] transition-colors duration-300"
+                          style={{ color: isOpen ? "#fff" : purple }}
+                        >
+                          {item.question}
+                        </span>
+                        <span
+                          className="text-[16px] ml-[10px] flex-shrink-0 transition-colors duration-300"
+                          style={{
+                            color: isOpen ? "rgba(255,255,255,0.25)" : "rgba(56,28,89,0.25)",
+                          }}
+                        >
+                          {isOpen ? "−" : "+"}
+                        </span>
+                      </button>
+                      <div
+                        className="overflow-hidden transition-all duration-300"
+                        style={{
+                          maxHeight: isOpen ? 300 : 0,
+                          opacity: isOpen ? 1 : 0,
+                          background: purple,
+                        }}
+                      >
+                        <p
+                          className="px-[15px] md:px-[20px] pb-[15px] md:pb-[20px] text-[16px] font-normal leading-[1.6] tracking-[0.16px]"
+                          style={{ color: "rgba(255,255,255,0.75)" }}
+                        >
+                          {item.answer}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+              {!showAllFaq && faqItems.length > FAQ_VISIBLE_COUNT && (
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-center p-[15px] text-[16px] font-medium tracking-[0.16px]"
+                  style={{ color: purpleAccent }}
+                  onClick={() => setShowAllFaq(true)}
+                >
+                  Show more...
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile/tablet FAQ items */}
+          <div className="w-full md:max-w-[980px] flex flex-col gap-[5px] lg:hidden">
             {faqItems.slice(0, showAllFaq ? faqItems.length : FAQ_VISIBLE_COUNT).map((item, i) => {
               const isOpen = openFaq === i
               return (
@@ -960,12 +1107,6 @@ export default function Home() {
               )
             })}
             {!showAllFaq && faqItems.length > FAQ_VISIBLE_COUNT && (
-              <div
-                className="overflow-hidden transition-all duration-500"
-                style={{ maxHeight: showAllFaq ? 5000 : 0 }}
-              />
-            )}
-            {!showAllFaq && faqItems.length > FAQ_VISIBLE_COUNT && (
               <button
                 type="button"
                 className="w-full flex items-center justify-center p-[15px] text-[16px] font-medium tracking-[0.16px]"
@@ -976,7 +1117,9 @@ export default function Home() {
               </button>
             )}
           </div>
-          <div className="w-full md:max-w-[980px] lg:max-w-none flex flex-col md:flex-row md:items-center md:justify-between gap-[25px] lg:col-start-1 lg:row-start-2 lg:flex-col lg:items-start lg:justify-start">
+
+          {/* Mobile/tablet: Still have questions */}
+          <div className="w-full md:max-w-[980px] flex flex-col md:flex-row md:items-center md:justify-between gap-[25px] lg:hidden">
             <div className="flex flex-col">
               <span className="text-[16px] font-medium tracking-[0.16px]" style={{ color: purple }}>
                 Still have questions?
@@ -1001,10 +1144,10 @@ export default function Home() {
       </main>
 
       {/* Start Your Journey CTA */}
-      <section className="mt-[50px] md:mt-[70px] px-[15px] md:px-6 lg:px-8">
+      <section className="mt-[50px] md:mt-[70px] lg:mt-[150px] px-[15px] md:px-6 lg:px-8">
         <div className="max-w-[1240px] mx-auto grid grid-cols-1 md:grid-cols-[340px_1fr] gap-[16px] md:gap-0">
           <div
-            className="order-1 md:order-2 aspect-[275/361] md:aspect-auto px-[35px] pt-[35px] pb-[30px] md:pt-[50px] md:pb-[50px] md:px-[25px] flex flex-col gap-[50px]"
+            className="order-1 md:order-2 aspect-[275/361] md:aspect-auto px-[35px] pt-[35px] pb-[30px] md:pt-[50px] md:pb-[50px] md:px-[25px] lg:p-[100px] flex flex-col gap-[50px]"
             style={{ background: purple }}
           >
             <div className="flex items-center gap-[5px]">
@@ -1017,7 +1160,7 @@ export default function Home() {
               </span>
             </div>
             <div className="flex flex-col gap-[20px] text-white">
-              <h2 className="text-[32px] font-semibold leading-none tracking-[-0.64px]">
+              <h2 className="text-[32px] lg:text-[48px] font-semibold leading-none tracking-[-0.64px] lg:tracking-[-1.12px]">
                 Start Your Journey
                 <br />
                 To Fuller Hair Today
@@ -1072,10 +1215,11 @@ export default function Home() {
         >
           <div className="flex items-start justify-between md:gap-[25px]">
             <h3
-              className="text-[32px] font-semibold leading-none tracking-[-0.64px] w-[242px]"
+              className="text-[32px] font-semibold leading-none tracking-[-0.64px]"
               style={{ color: purple }}
             >
-              Stay in the loop with Hair health tips
+              Stay in the loop with
+              <br /> Hair health tips
             </h3>
             <button
               type="button"
