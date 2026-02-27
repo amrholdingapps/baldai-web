@@ -46,6 +46,10 @@ function SectionDescription({ children }: { children: React.ReactNode }) {
   )
 }
 
+function getPlatformLabel(platform: string) {
+  return platform === "iOS" ? " iOS" : platform
+}
+
 function PrimaryButton({
   children,
   outline,
@@ -288,7 +292,7 @@ const routineItems = [
   },
   {
     title: "Procedures",
-    desc: "Microneedling (Derma roller and pen), Red light Therapy, PRP, ",
+    desc: "Microneedling (Derma roller and pen), Red light Therapy, PRP",
     icon: "/images/redesign/routine bullets/routine_procedures.png",
   },
   {
@@ -429,11 +433,12 @@ export default function Home() {
   }, [isReviewsAutoplayPaused, reviewsCarousel, reviewsCarousel.activeIndex])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-clip">
+      <style dangerouslySetInnerHTML={{ __html: `body { background-color: white !important; }` }} />
       {/* Header */}
       <header
         className="fixed top-0 left-0 right-0 z-30 bg-white transition-transform duration-300 px-4 py-[23px] md:px-6 lg:px-8"
-        style={{ transform: headerVisible || menuOpen ? "translateY(0)" : "translateY(-100%)" }}
+        style={{ transform: headerVisible || menuOpen ? "none" : "translateY(-100%)" }}
       >
         <div className="w-full max-w-[1240px] mx-auto flex items-center justify-between gap-[24px]">
           <Image src="/images/redesign/logo.png" alt="Hairloss AI" width={124} height={25} />
@@ -721,7 +726,7 @@ export default function Home() {
                     90% of treatment
                   </span>{" "}
                   success comes from consistency. We&apos;ve built a smart organizer specifically
-                  for hair health management
+                  for hair health management.
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-y-[25px] md:gap-y-[36px] gap-x-[25px] md:gap-x-[56px]">
@@ -790,7 +795,7 @@ export default function Home() {
                   <SectionDescription>
                     Verified users share measurable changes based on
                     <br className="hidden lg:inline" /> consistent scans and objective hair health
-                    scores
+                    scores.
                   </SectionDescription>
                 </div>
               </div>
@@ -833,7 +838,7 @@ export default function Home() {
                           className="text-[14px] font-normal tracking-[0.14px]"
                           style={{ color: purpleSoft }}
                         >
-                          {t.location} · {t.platform}
+                          {t.location} · {getPlatformLabel(t.platform)}
                         </span>
                       </div>
                     </div>
@@ -874,7 +879,7 @@ export default function Home() {
                             className="text-[14px] font-normal tracking-[0.14px]"
                             style={{ color: purpleSoft }}
                           >
-                            {t.location} · {t.platform}
+                            {t.location} · {getPlatformLabel(t.platform)}
                           </span>
                         </div>
                       </div>
@@ -960,7 +965,7 @@ export default function Home() {
             <div className="flex flex-col gap-[20px]">
               <SectionTitle>Frequently Asked Questions</SectionTitle>
               <SectionDescription>
-                Clear answers about scanning, analysis, progress tracking, and data usage
+                Clear answers about scanning, analysis, progress tracking, and data usage.
               </SectionDescription>
             </div>
           </div>
@@ -970,7 +975,7 @@ export default function Home() {
             <CategoryTag label="Frequently Asked Questions" />
             <div className="mt-[100px]">
               <SectionDescription>
-                Clear answers about scanning, analysis, progress tracking, and data usage
+                Clear answers about scanning, analysis, progress tracking, and data usage.
               </SectionDescription>
             </div>
             <div className="mt-auto">
@@ -1244,16 +1249,10 @@ export default function Home() {
           style={{ color: purple }}
         >
           <div className="leading-normal">
-            <p>London (R&amp;D Center)</p>
-            <p>T: (+44) 20 7946 0101</p>
-            <p>24 Baker Street, Marylebone</p>
-            <p>NW1 6XE London, United Kingdom</p>
-          </div>
-          <div className="leading-normal">
-            <p>San Francisco (HQ)</p>
-            <p>T: (+1) 415 555 0198</p>
-            <p>500 Howard St, South of Market CA</p>
-            <p>94105 San Francisco, USA</p>
+            <p>AMR Holding B.V</p>
+            <p>T: (+31) 645057652</p>
+            <p>Oostzaanstraat 8</p>
+            <p>1013 WK Amsterdam, Netherlands</p>
           </div>
           <div
             className="flex gap-[25px] text-[16px] font-normal tracking-[0.16px]"
