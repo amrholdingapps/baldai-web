@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { createClient } from "@supabase/supabase-js"
 import { testimonials } from "@/constants/testimonials"
 import { faqItems } from "@/constants/faq"
 
@@ -54,17 +55,22 @@ function PrimaryButton({
   children,
   outline,
   icon,
+  onClick,
+  type = "button",
 }: {
   children: React.ReactNode
   outline?: boolean
   icon?: React.ReactNode
+  onClick?: () => void
+  type?: "button" | "submit" | "reset"
 }) {
   if (outline) {
     return (
       <button
-        type="button"
+        type={type}
         className="flex items-center justify-center gap-[10px] px-[25px] py-[16px] rounded-[12px] border text-[16px] font-medium tracking-[0.16px] whitespace-nowrap w-[70vw] self-start md:w-auto"
         style={{ borderColor: purpleBorder, color: purple }}
+        onClick={onClick}
       >
         {children}
         {icon}
@@ -73,9 +79,10 @@ function PrimaryButton({
   }
   return (
     <button
-      type="button"
+      type={type}
       className="flex items-center justify-center gap-[5px] px-[25px] py-[16px] rounded-[12px] text-[16px] font-medium tracking-[0.16px] text-white w-[256px]"
       style={{ background: purple, boxShadow: "0px 8px 21px rgba(56,28,89,0.25)" }}
+      onClick={onClick}
     >
       {children}
       {icon}
@@ -338,13 +345,13 @@ const FAQ_VISIBLE_COUNT = 5
 
 const menuItems: { label: string; target: string; type: "scroll" | "link"; muted?: boolean }[] = [
   { label: "Home", target: "top", type: "scroll", muted: true },
-  { label: "Atlas DNA Kit", target: "/atlas-dna", type: "link" },
+  // { label: "Atlas DNA Kit", target: "/atlas-dna", type: "link" },
   { label: "Technology", target: "technology", type: "scroll" },
   { label: "Tracker", target: "progress", type: "scroll" },
   { label: "Treatments", target: "calendar", type: "scroll" },
   { label: "Testimonials", target: "testimonials", type: "scroll" },
   { label: "FAQ", target: "faq", type: "scroll" },
-  { label: "Blog", target: "/blog", type: "link" },
+  // { label: "Blog", target: "/blog", type: "link" },
 ]
 
 export default function Home() {
@@ -357,15 +364,20 @@ export default function Home() {
   const reviewsCarousel = useCarouselTracker(testimonials.length, 16)
 
   const [headerVisible, setHeaderVisible] = useState(true)
+  const [newsletterOpen, setNewsletterOpen] = useState(false)
+  const [newsletterEmail, setNewsletterEmail] = useState("")
+  const [newsletterError, setNewsletterError] = useState("")
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false)
   const lastScrollY = useRef(0)
   const scrollUpAccumulator = useRef(0)
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : ""
+    document.body.style.overflow = menuOpen || newsletterOpen ? "hidden" : ""
     return () => {
       document.body.style.overflow = ""
     }
-  }, [menuOpen])
+  }, [menuOpen, newsletterOpen])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -412,6 +424,81 @@ export default function Home() {
     event.preventDefault()
     event.currentTarget.scrollLeft += event.deltaY
   }, [])
+
+  const closeNewsletterModal = useCallback(() => {
+    setNewsletterOpen(false)
+    setNewsletterEmail("")
+    setNewsletterError("")
+    setNewsletterSubmitted(false)
+    setNewsletterSubmitting(false)
+  }, [])
+
+  const openNewsletterModal = useCallback(() => {
+    setNewsletterOpen(true)
+    setNewsletterEmail("")
+    setNewsletterError("")
+    setNewsletterSubmitted(false)
+    setNewsletterSubmitting(false)
+  }, [])
+
+  const handleNewsletterSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault()
+      if (newsletterSubmitting) return
+      const trimmedEmail = newsletterEmail.trim()
+      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(trimmedEmail)
+
+      if (!isValidEmail) {
+        setNewsletterError("Please enter a valid email address.")
+        return
+      }
+
+      try {
+        setNewsletterSubmitting(true)
+        setNewsletterError("")
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        if (!supabaseUrl || !supabaseAnonKey) {
+          setNewsletterError("Newsletter is temporarily unavailable.")
+          return
+        }
+
+        const normalizedEmail = trimmedEmail.toLowerCase()
+        const supabase = createClient(supabaseUrl, supabaseAnonKey)
+        const { error } = await supabase
+          .from("newsletter_emails")
+          .insert({ email: normalizedEmail })
+
+        if (error) {
+          if (error.code === "23505") {
+            setNewsletterError("This email is already subscribed.")
+          } else {
+            setNewsletterError("Could not subscribe right now. Please try again.")
+          }
+          return
+        }
+
+        setNewsletterSubmitted(true)
+        setNewsletterEmail("")
+      } catch {
+        setNewsletterError("Could not subscribe right now. Please try again.")
+      } finally {
+        setNewsletterSubmitting(false)
+      }
+    },
+    [newsletterEmail, newsletterSubmitting]
+  )
+
+  useEffect(() => {
+    if (!newsletterOpen) return
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeNewsletterModal()
+      }
+    }
+    window.addEventListener("keydown", handleEscape)
+    return () => window.removeEventListener("keydown", handleEscape)
+  }, [closeNewsletterModal, newsletterOpen])
 
   useEffect(() => {
     if (isReviewsAutoplayPaused || testimonials.length <= 1) return
@@ -1239,6 +1326,7 @@ export default function Home() {
             <PrimaryButton
               outline
               icon={<Image src="/images/redesign/arrow_icon.png" alt="" width={16} height={19} />}
+              onClick={openNewsletterModal}
             >
               Subscribe to our newsletter
             </PrimaryButton>
@@ -1278,6 +1366,125 @@ export default function Home() {
           <p>All rights reserved - Copyright © 2026</p>
         </div>
       </footer>
+
+      <div
+        className="fixed inset-0 z-50 px-[15px] md:px-6 lg:px-8 flex items-center justify-center transition-opacity duration-300 ease-out motion-reduce:transition-none"
+        style={{
+          background: "rgba(56,28,89,0.35)",
+          opacity: newsletterOpen ? 1 : 0,
+          visibility: newsletterOpen ? "visible" : "hidden",
+          pointerEvents: newsletterOpen ? "auto" : "none",
+        }}
+        aria-hidden={!newsletterOpen}
+        onClick={closeNewsletterModal}
+      >
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="newsletter-modal-title"
+          className="w-full max-w-[560px] rounded-[20px] border p-[20px] md:p-[30px] flex flex-col gap-[16px] transition-all duration-300 ease-out motion-reduce:transition-none"
+          style={{
+            borderColor: purpleBorder,
+            background: "rgba(255,255,255,0.98)",
+            boxShadow: "0 24px 60px rgba(56,28,89,0.24)",
+            transform: newsletterOpen ? "translateY(0) scale(1)" : "translateY(14px) scale(0.98)",
+            opacity: newsletterOpen ? 1 : 0,
+          }}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="flex items-start justify-between gap-[14px]">
+            <div className="flex flex-col gap-[6px]">
+              <h4
+                id="newsletter-modal-title"
+                className="text-[24px] md:text-[28px] font-semibold leading-none tracking-[-0.56px]"
+                style={{ color: purple }}
+              >
+                Subscribe to our newsletter
+              </h4>
+              <p
+                className="text-[14px] md:text-[16px] font-normal leading-[1.45] tracking-[0.14px]"
+                style={{ color: purpleSoft }}
+              >
+                Get hair health tips and product updates.
+              </p>
+            </div>
+            <button
+              type="button"
+              aria-label="Close newsletter form"
+              className="w-[30px] h-[30px] rounded-full border text-[13px] font-semibold"
+              style={{ borderColor: purpleBorder, color: purple }}
+              onClick={closeNewsletterModal}
+            >
+              X
+            </button>
+          </div>
+
+          {newsletterSubmitted ? (
+            <div
+              className="rounded-[12px] border px-[14px] py-[12px]"
+              style={{ borderColor: "rgba(34,197,94,0.25)", background: "rgba(34,197,94,0.08)" }}
+            >
+              <p
+                className="text-[14px] md:text-[15px] font-medium leading-[1.45] tracking-[0.14px]"
+                style={{ color: "#166534" }}
+              >
+                Congratulations! You are successfully subscribed to our newsletter.
+              </p>
+            </div>
+          ) : (
+            <form className="flex flex-col gap-[12px]" onSubmit={handleNewsletterSubmit}>
+              <label
+                htmlFor="newsletter-email"
+                className="text-[14px] font-medium tracking-[0.14px]"
+                style={{ color: purple }}
+              >
+                Email address
+              </label>
+              <input
+                id="newsletter-email"
+                type="email"
+                autoComplete="email"
+                value={newsletterEmail}
+                disabled={newsletterSubmitting}
+                onChange={(event) => {
+                  setNewsletterEmail(event.target.value)
+                  setNewsletterError("")
+                }}
+                placeholder="you@example.com"
+                className="w-full h-[50px] rounded-[12px] border px-[14px] text-[15px] outline-none"
+                style={{
+                  borderColor: newsletterError ? "#fca5a5" : purpleBorder,
+                  color: purple,
+                  background: "white",
+                }}
+              />
+              {newsletterError && (
+                <div
+                  role="alert"
+                  className="rounded-[10px] border px-[12px] py-[10px]"
+                  style={{ borderColor: "#fecaca", background: "#fef2f2" }}
+                >
+                  <p className="text-[13px] font-medium leading-[1.4]" style={{ color: "#991b1b" }}>
+                    {newsletterError}
+                  </p>
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={newsletterSubmitting}
+                className="h-[50px] px-[22px] rounded-[12px] text-[15px] font-medium text-white whitespace-nowrap self-start"
+                style={{
+                  background: purple,
+                  boxShadow: "0px 8px 21px rgba(56,28,89,0.2)",
+                  opacity: newsletterSubmitting ? 0.7 : 1,
+                }}
+              >
+                {newsletterSubmitting ? "Sending..." : "Send"}
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
