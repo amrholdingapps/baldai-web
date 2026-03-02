@@ -13,7 +13,7 @@ export const faqItems = [
   },
   {
     question: "What is the Hair Health Score?",
-    answer: "The Hair Health Score is a personalized 0–100 index calculated from hairline position, density, and overall coverage. It provides an objective benchmark to track your progress over time.",
+    answer: "The Hair Health Score is a personalized 0–100 index calculated from hairline position and density. It provides an objective benchmark to track your progress over time.",
   },
   {
     question: "Does the app provide treatment recommendations?",
@@ -53,16 +53,16 @@ export const faqItems = [
   },
   {
     question: "Does the app send reminders?",
-    answer: "Yes. You can schedule reminders for scans, medications, treatments, and doctor visits to stay consistent.",
+    answer: "Yes. You can schedule reminders for scans, medications and treatments to stay consistent.",
   },
   {
     question: "Can I share my results with a doctor?",
     answer: "Yes. You can export scan reports and progress summaries to share with your dermatologist or hair restoration specialist.",
   },
-  {
-    question: "Is my data secure?",
-    answer: "Yes. Your photos and data are encrypted and securely stored. We do not sell or share your personal information.",
-  },
+	{
+	  question: "Is my data secure?",
+	  answer: "Yes. We do not store your photos or personal data on our servers. Your scan images are deleted after processing, and all results are stored locally on your device."
+	},
   {
     question: "Is the app free?",
     answer: "Hairloss AI offers limited free functionality. Advanced AI analysis, detailed progress tracking, and personalized insights require a subscription.",

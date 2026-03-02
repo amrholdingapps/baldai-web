@@ -10,7 +10,7 @@ import { faqItems } from "@/constants/faq"
 const purple = "#381c59"
 const purpleSoft = "rgba(56,28,89,0.7)"
 const purpleMuted = "rgba(56,28,89,0.5)"
-const purpleSubtle = "rgba(56,28,89,0.05)"
+const purpleSubtle = "#381c590d" /* #381c59 with 5% opacity */
 const purpleBorder = "rgba(56,28,89,0.2)"
 const purpleAccent = "#9553f9"
 
@@ -235,7 +235,7 @@ function TrackingCard({
           {title}
         </h3>
         <p
-          className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
+          className="text-[18px] font-normal leading-[1.4] tracking-[0.18px] whitespace-pre-line"
           style={{ color: purpleSoft }}
         >
           {description}
@@ -289,22 +289,22 @@ const brands = [
 const routineItems = [
   {
     title: "Medications catalog",
-    desc: "Minoxidil, Finasteride, Dutasteride",
+    desc: "Minoxidil, Finasteride, Dutasteride, Ketaconazole shampoo",
     icon: "/images/redesign/routine bullets/routine_medication.png",
   },
   {
     title: "Supplemental Treatments",
-    desc: "Rosemary oil, ketaconazole shampoo, vitamins and supplements",
+    desc: "Rosemary oil, Red Light Therapy, Supplements",
     icon: "/images/redesign/routine bullets/routine_treatments.png",
   },
   {
     title: "Procedures",
-    desc: "Microneedling (Derma roller and pen), Red light Therapy, PRP",
+    desc: "Microneedling (Derma Roller, Pen and Stamp), Red light Therapy, PRP",
     icon: "/images/redesign/routine bullets/routine_procedures.png",
   },
   {
     title: "Medical Data",
-    desc: "Lab results (Ferritin, Hormones), Planned Transplant dates",
+    desc: "Lab results (Ferritin, Hormones), planned Transplant dates",
     icon: "/images/redesign/routine bullets/routine_data.png",
   },
 ]
@@ -323,20 +323,19 @@ const techCards = [
   },
   {
     title: "Density Heatmaps",
-    description:
-      "See a color-coded map of your scalp density to understand where you're losing the most.",
+    description: "Visualize thinning areas before they become visible to the naked eye.",
     imageSrc: "/images/redesign/density_heatmaps.jpg",
   },
   {
     title: "Everything in One Place",
     description:
-      "All your scans, treatments, scores and medical history — organized in a single timeline.",
+      "It's easier when everything is together. Keep your photos, scan results, treatments, lab tests and hair transplants in one place.",
     imageSrc: "/images/redesign/everything.jpg",
   },
   {
     title: "Privacy & Security",
     description:
-      "Your data is encrypted and stored securely. We never share your photos or personal information.",
+      "We understand how personal this is. That's why we don't store any of your data. Everything stays safely on your phone.",
     imageSrc: "/images/redesign/privacy.jpg",
   },
 ]
@@ -351,6 +350,7 @@ const menuItems: { label: string; target: string; type: "scroll" | "link"; muted
   { label: "Treatments", target: "calendar", type: "scroll" },
   { label: "Testimonials", target: "testimonials", type: "scroll" },
   { label: "FAQ", target: "faq", type: "scroll" },
+  { label: "App Download", target: "app-download", type: "scroll" },
   // { label: "Blog", target: "/blog", type: "link" },
 ]
 
@@ -602,8 +602,8 @@ export default function Home() {
                 className="text-[18px] lg:text-[24px] font-normal leading-[1.4] tracking-[0.18px] md:w-[70%] lg:w-auto lg:max-w-[560px]"
                 style={{ color: purpleSoft }}
               >
-                The first mobile app designed for professional-grade alopecia tracking. Scan your
-                hair, discover effective treatments, and witness real progress through data.
+                Scan your hair in under 60 seconds, discover effective treatments, and witness real
+                progress through data.
               </p>
             </div>
             <div className="w-full aspect-[343/300] lg:aspect-auto overflow-hidden relative lg:row-span-2 lg:overflow-visible lg:pt-0 lg:pr-[50px] lg:min-w-0">
@@ -705,7 +705,7 @@ export default function Home() {
                     of the hardest part - objective evaluation.
                   </p>
                   <p
-                    className="text-[18px] font-semibold leading-[1.4] tracking-[0.18px]"
+                    className="text-[18px] font-normal leading-[1.4] tracking-[0.18px]"
                     style={{ color: purple }}
                   >
                     No more guessing while looking in the mirror.
@@ -765,7 +765,7 @@ export default function Home() {
               imageSrcMd="/images/redesign/compare_md.jpg"
               imageSrcMdWidth={1104}
               imageSrcMdHeight={1050}
-              imageSrcLg="/images/redesign/compare_lg.png"
+              imageSrcLg="/images/redesign/compare_lg.jpg"
               imageSrcLgWidth={1314}
               imageSrcLgHeight={1000}
               imageAlt="Compare Scans"
@@ -774,8 +774,10 @@ export default function Home() {
             <div className="md:col-span-2">
               <TrackingCard
                 title="Progress Tracker"
-                description="Track your journey from the first supplement to your first post-transplant haircut. See what made the difference. Easily spot patterns related to your treatment efficacy."
-                imageSrc="/images/redesign/progress_tracker_m.png"
+                description={
+                  "Track your journey from the first supplement to your first post-transplant haircut.\nSee what made the difference. Easily spot patterns related to your treatment efficacy."
+                }
+                imageSrc="/images/redesign/progress_tracker_vector_m.svg"
                 imageSrcMd="/images/redesign/progress_tracker_vector_md.svg"
                 imageSrcMdWidth={760}
                 imageSrcMdHeight={250}
@@ -875,8 +877,8 @@ export default function Home() {
               <CategoryTag label="Testimonials" />
               <div className="lg:grid lg:grid-cols-[0.5fr_0.5fr] lg:items-start lg:gap-[30px]">
                 <SectionTitle>
-                  Trusted by 50,000+ men
-                  <br className="hidden lg:inline" /> From over 20 countries
+                  Trusted by 50,000+ Men
+                  <br className="hidden lg:inline" /> From Over 20 Countries
                 </SectionTitle>
                 <div className="lg:pt-[5px]">
                   <SectionDescription>
@@ -1017,24 +1019,16 @@ export default function Home() {
               {brands.map((brand) => (
                 <div
                   key={brand.name}
-                  className="h-[160px] flex flex-col items-center justify-end gap-[10px] py-[25px] px-[20px]"
+                  className="h-[160px] flex items-center justify-center py-[25px] px-[20px]"
                   style={{ background: purpleSubtle }}
                 >
-                  <div className="flex-1 flex items-center justify-center">
-                    <Image
-                      src={`/images/redesign/brands/${brand.img}`}
-                      alt={brand.name}
-                      width={140}
-                      height={60}
-                      className="object-contain"
-                    />
-                  </div>
-                  <span
-                    className="text-[16px] font-normal leading-none tracking-[0.16px]"
-                    style={{ color: purpleMuted }}
-                  >
-                    {brand.name}
-                  </span>
+                  <Image
+                    src={`/images/redesign/brands/${brand.img}`}
+                    alt={brand.name}
+                    width={140}
+                    height={60}
+                    className="object-contain"
+                  />
                 </div>
               ))}
             </div>
@@ -1236,7 +1230,10 @@ export default function Home() {
       </main>
 
       {/* Start Your Journey CTA */}
-      <section className="mt-[50px] md:mt-[70px] lg:mt-[150px] px-[15px] md:px-6 lg:px-8">
+      <section
+        id="app-download"
+        className="mt-[50px] md:mt-[70px] lg:mt-[150px] px-[15px] md:px-6 lg:px-8"
+      >
         <div className="max-w-[1240px] mx-auto grid grid-cols-1 md:grid-cols-[340px_1fr] gap-[16px] md:gap-0">
           <div
             className="order-1 md:order-2 aspect-[275/361] md:aspect-auto px-[35px] pt-[35px] pb-[30px] md:pt-[50px] md:pb-[50px] md:px-[25px] lg:p-[100px] flex flex-col gap-[50px]"
@@ -1248,7 +1245,7 @@ export default function Home() {
                 className="text-[16px] font-medium tracking-[0.16px]"
                 style={{ color: "#ceb1ff" }}
               >
-                Download app
+                App Download
               </span>
             </div>
             <div className="flex flex-col gap-[20px] text-white">
@@ -1259,7 +1256,7 @@ export default function Home() {
               </h2>
               <p className="text-[18px] font-normal leading-[1.4] tracking-[0.18px] md:max-w-[640px]">
                 Unlimited scans and analysis with subscription. Receive a precise analysis and a
-                personalized treatment plan in under 60 seconds,
+                personalized treatment plan in under 60 seconds.
               </p>
             </div>
             <div className="flex gap-[10px]">
@@ -1347,15 +1344,46 @@ export default function Home() {
             style={{ color: purple }}
           >
             <div className="flex-1 flex flex-col gap-[5px]">
-              <Link href="#">Atlas DNA Kit</Link>
-              <Link href="#">Technology</Link>
-              <Link href="#">Tracker</Link>
-              <Link href="#">Treatments</Link>
+              {menuItems
+                .filter((item) => item.target !== "top")
+                .slice(0, 3)
+                .map((item) =>
+                  item.type === "link" ? (
+                    <Link key={item.label} href={item.target}>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <button
+                      key={item.label}
+                      type="button"
+                      className="text-left"
+                      onClick={() => handleMenuItemClick(item)}
+                    >
+                      {item.label}
+                    </button>
+                  )
+                )}
             </div>
             <div className="flex-1 flex flex-col gap-[5px]">
-              <Link href="#">Testimonials</Link>
-              <Link href="#">FAQ</Link>
-              <Link href="#">Blog</Link>
+              {menuItems
+                .filter((item) => item.target !== "top")
+                .slice(3)
+                .map((item) =>
+                  item.type === "link" ? (
+                    <Link key={item.label} href={item.target}>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <button
+                      key={item.label}
+                      type="button"
+                      className="text-left"
+                      onClick={() => handleMenuItemClick(item)}
+                    >
+                      {item.label}
+                    </button>
+                  )
+                )}
             </div>
           </div>
         </div>
