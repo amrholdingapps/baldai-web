@@ -56,7 +56,10 @@ export default function PaywallStep({ packages, loading, error }: PaywallStepPro
   const [purchaseResult, setPurchaseResult] = useState<PurchaseResult | null>(null)
   const slideInterval = useRef<NodeJS.Timeout | null>(null)
 
+  const paywallTracked = useRef(false)
   useEffect(() => {
+    if (paywallTracked.current) return
+    paywallTracked.current = true
     trackEvent(AnalyticsEvents.PAYWALL_SHOWN)
     trackPaywallViewed()
   }, [])

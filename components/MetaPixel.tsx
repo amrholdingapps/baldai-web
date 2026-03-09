@@ -5,7 +5,7 @@ const META_PIXEL_ID = "1553321342410513"
 export default function MetaPixel() {
   return (
     <>
-      <Script id="meta-pixel" strategy="beforeInteractive">
+      <Script id="meta-pixel" strategy="afterInteractive">
         {`
           !function(f,b,e,v,n,t,s)
           {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -15,6 +15,7 @@ export default function MetaPixel() {
           t.src=v;s=b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t,s)}(window, document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
+          fbq('set', 'autoConfig', false, '${META_PIXEL_ID}');
           fbq('init', '${META_PIXEL_ID}');
           fbq('track', 'PageView');
         `}
