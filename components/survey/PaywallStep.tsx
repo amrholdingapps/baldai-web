@@ -11,6 +11,7 @@ import SubscriptionPlanCard from "@/components/survey/SubscriptionPlanCard"
 import ContinueButton from "@/components/survey/ContinueButton"
 import { getPurchases } from "@/lib/revenuecat-web"
 import { trackEvent, AnalyticsEvents } from "@/lib/analytics"
+import { trackPaywallViewed, trackCheckoutStarted, trackPurchaseCompleted } from "@/lib/meta-pixel"
 
 interface PaywallStepProps {
   packages: Package[]
@@ -57,6 +58,7 @@ export default function PaywallStep({ packages, loading, error }: PaywallStepPro
 
   useEffect(() => {
     trackEvent(AnalyticsEvents.PAYWALL_SHOWN)
+    trackPaywallViewed()
   }, [])
 
   useEffect(() => {
@@ -91,9 +93,16 @@ export default function PaywallStep({ packages, loading, error }: PaywallStepPro
   const handlePurchase = useCallback(async () => {
     if (!selectedPackage) return
     setPurchasing(true)
+
+    const price = selectedPackage.webBillingProduct?.price
+    const currency = price?.currency ?? "USD"
+    const value = price ? price.amountMicros / 1_000_000 : 0
+
     trackEvent(AnalyticsEvents.PAYWALL_PURCHASE_STARTED, {
       plan: selectedPackage.identifier,
     })
+    trackCheckoutStarted(selectedPackage.identifier, currency, value)
+
     try {
       const purchases = getPurchases()
       const result = await purchases.purchase({
@@ -102,6 +111,7 @@ export default function PaywallStep({ packages, loading, error }: PaywallStepPro
       trackEvent(AnalyticsEvents.PAYWALL_PURCHASE_COMPLETED, {
         plan: selectedPackage.identifier,
       })
+      trackPurchaseCompleted(selectedPackage.identifier, currency, value)
       setPurchaseResult(result)
     } catch (e) {
       if (e instanceof PurchasesError && e.errorCode === ErrorCode.UserCancelledError) {

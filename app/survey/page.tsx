@@ -5,6 +5,7 @@ import type { Package } from "@revenuecat/purchases-js"
 import { surveyColors, TOTAL_STEPS, TRANSITION_MS } from "@/constants/survey"
 import { getPurchases } from "@/lib/revenuecat-web"
 import { trackEvent, AnalyticsEvents } from "@/lib/analytics"
+import { trackSurveyCompleted } from "@/lib/meta-pixel"
 import StepIndicator from "@/components/survey/StepIndicator"
 import ContinueButton from "@/components/survey/ContinueButton"
 import GoalsStep from "@/components/survey/GoalsStep"
@@ -61,6 +62,7 @@ export default function SurveyPage() {
       trackEvent(AnalyticsEvents.SURVEY_GOALS_SENT, { goals: selectedGoals })
     } else if (step === 1) {
       trackEvent(AnalyticsEvents.SURVEY_MEDICATION_SENT, { medication: selectedMedication })
+      trackSurveyCompleted()
     }
     if (step < TOTAL_STEPS - 1) goToStep(step + 1)
   }, [step, goToStep, selectedGoals, selectedMedication])

@@ -299,7 +299,7 @@ const routineItems = [
   },
   {
     title: "Procedures",
-    desc: "Microneedling (Derma Roller, Pen and Stamp), Red light Therapy, PRP",
+    desc: "Microneedling (Derma Roller, Pen and Stamp), PRP",
     icon: "/images/redesign/routine bullets/routine_procedures.png",
   },
   {
@@ -1004,7 +1004,7 @@ export default function Home() {
             </div>
           </div>
           <div className="lg:hidden">
-            <PrimaryButton>View all reviews</PrimaryButton>
+            <PrimaryButton>View more reviews</PrimaryButton>
           </div>
 
           {/* Brands We Love */}
