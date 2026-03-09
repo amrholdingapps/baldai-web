@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import type { Package } from "@revenuecat/purchases-js"
+import type { Package, PurchaseResult } from "@revenuecat/purchases-js"
 import { ErrorCode, PurchasesError } from "@revenuecat/purchases-js"
 import { surveyColors, SLIDE_TITLES, SLIDE_IMAGES } from "@/constants/survey"
 import PageIndicator from "@/components/survey/PageIndicator"
 import SubscriptionPlanCard from "@/components/survey/SubscriptionPlanCard"
 import ContinueButton from "@/components/survey/ContinueButton"
 import { getPurchases } from "@/lib/revenuecat-web"
+import { trackEvent, AnalyticsEvents } from "@/lib/analytics"
 
 interface PaywallStepProps {
   packages: Package[]
@@ -51,9 +52,13 @@ export default function PaywallStep({ packages, loading, error }: PaywallStepPro
   const [currentSlide, setCurrentSlide] = useState(0)
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null)
   const [purchasing, setPurchasing] = useState(false)
+  const [purchaseResult, setPurchaseResult] = useState<PurchaseResult | null>(null)
   const slideInterval = useRef<NodeJS.Timeout | null>(null)
 
-  // When packages arrive from parent, select first by default
+  useEffect(() => {
+    trackEvent(AnalyticsEvents.PAYWALL_SHOWN)
+  }, [])
+
   useEffect(() => {
     if (packages.length > 0) {
       setSelectedPackage((prev) =>
@@ -71,23 +76,134 @@ export default function PaywallStep({ packages, loading, error }: PaywallStepPro
     }
   }, [])
 
+  const handleSelectPackage = useCallback(
+    (pkg: Package) => {
+      if (pkg.identifier !== selectedPackage?.identifier) {
+        trackEvent(AnalyticsEvents.PAYWALL_PLAN_CHANGED, {
+          plan: pkg.identifier,
+        })
+      }
+      setSelectedPackage(pkg)
+    },
+    [selectedPackage]
+  )
+
   const handlePurchase = useCallback(async () => {
     if (!selectedPackage) return
     setPurchasing(true)
+    trackEvent(AnalyticsEvents.PAYWALL_PURCHASE_STARTED, {
+      plan: selectedPackage.identifier,
+    })
     try {
       const purchases = getPurchases()
-      await purchases.purchase({ rcPackage: selectedPackage })
-      // Success: optionally redirect or close paywall
+      const result = await purchases.purchase({
+        rcPackage: selectedPackage,
+      })
+      trackEvent(AnalyticsEvents.PAYWALL_PURCHASE_COMPLETED, {
+        plan: selectedPackage.identifier,
+      })
+      setPurchaseResult(result)
     } catch (e) {
       if (e instanceof PurchasesError && e.errorCode === ErrorCode.UserCancelledError) {
         // User closed/cancelled — do nothing
       } else {
+        trackEvent(AnalyticsEvents.PAYWALL_PURCHASE_FAILED, {
+          plan: selectedPackage.identifier,
+          error: e instanceof Error ? e.message : String(e),
+        })
         console.error("Purchase failed", e)
       }
     } finally {
       setPurchasing(false)
     }
   }, [selectedPackage])
+
+  if (purchaseResult) {
+    const redeemUrl = purchaseResult.redemptionInfo?.redeemUrl
+    return (
+      <div className="flex-1 flex flex-col px-[24px] py-[40px] overflow-y-auto">
+        <div className="flex flex-col items-center">
+          {/* Checkmark */}
+          <div
+            className="w-[56px] h-[56px] rounded-full flex items-center justify-center mb-[24px]"
+            style={{ backgroundColor: surveyColors.primary }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0E0C12" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+
+          <h2 className="text-[22px] font-bold text-white mb-[8px] text-center">
+            Welcome to HairLoss AI!
+          </h2>
+          <p
+            className="text-[15px] text-center mb-[36px] max-w-[340px]"
+            style={{ color: surveyColors.fgSecondary }}
+          >
+            We&apos;ve successfully charged your payment method for your new subscription.
+            Redeem it now by following the instructions below.
+          </p>
+
+          {/* Step 1 — Install */}
+          <div className="w-full mb-[32px]">
+            <p className="text-[13px] mb-[4px]" style={{ color: surveyColors.fgTertiary }}>
+              Step 1
+            </p>
+            <h3 className="text-[17px] font-semibold text-white mb-[14px]">
+              Install latest app
+            </h3>
+            <div className="flex gap-[10px]">
+              <a href="https://apps.apple.com/us/app/hairloss-ai-scan-hair-health/id6563141135">
+                <Image
+                  src="/images/redesign/appstore.png"
+                  alt="Download on the App Store"
+                  width={140}
+                  height={46}
+                />
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.sampil.baldai">
+                <Image
+                  src="/images/redesign/googleplay.png"
+                  alt="Get it on Google Play"
+                  width={140}
+                  height={46}
+                />
+              </a>
+            </div>
+          </div>
+
+          {/* Step 2 — Redeem */}
+          {redeemUrl && (
+            <div className="w-full mb-[32px]">
+              <p className="text-[13px] mb-[4px]" style={{ color: surveyColors.fgTertiary }}>
+                Step 2
+              </p>
+              <h3 className="text-[17px] font-semibold text-white mb-[8px]">
+                Redeem subscription in-app
+              </h3>
+              <p
+                className="text-[14px] mb-[16px]"
+                style={{ color: surveyColors.fgSecondary }}
+              >
+                On your mobile device, tap the button below to open the app and redeem your subscription.
+              </p>
+              <a
+                href={redeemUrl}
+                className="inline-block font-semibold text-[15px] py-[14px] px-[32px] rounded-full"
+                style={{ backgroundColor: surveyColors.primary, color: "#0E0C12" }}
+              >
+                Open app and redeem
+              </a>
+            </div>
+          )}
+
+          <p className="text-[12px] text-center" style={{ color: surveyColors.fgTertiary }}>
+            The redemption link expires in 60 minutes. A copy was also sent to your email.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -161,7 +277,7 @@ export default function PaywallStep({ packages, loading, error }: PaywallStepPro
                   formattedPrice={formattedPrice}
                   priceSuffix={billedLabel}
                   isActive={selectedPackage?.identifier === pkg.identifier}
-                  onSelect={() => setSelectedPackage(pkg)}
+                  onSelect={() => handleSelectPackage(pkg)}
                 />
               )
             })}

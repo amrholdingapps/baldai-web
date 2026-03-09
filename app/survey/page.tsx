@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import type { Package } from "@revenuecat/purchases-js"
 import { surveyColors, TOTAL_STEPS, TRANSITION_MS } from "@/constants/survey"
 import { getPurchases } from "@/lib/revenuecat-web"
+import { trackEvent, AnalyticsEvents } from "@/lib/analytics"
 import StepIndicator from "@/components/survey/StepIndicator"
 import ContinueButton from "@/components/survey/ContinueButton"
 import GoalsStep from "@/components/survey/GoalsStep"
@@ -20,10 +21,28 @@ export default function SurveyPage() {
   const [packages, setPackages] = useState<Package[]>([])
   const [packagesLoading, setPackagesLoading] = useState(true)
   const [packagesError, setPackagesError] = useState<string | null>(null)
+  const trackedSteps = useRef<Set<number>>(new Set())
+
+  useEffect(() => {
+    trackEvent(AnalyticsEvents.SURVEY_OPENED)
+  }, [])
+
+  useEffect(() => {
+    if (trackedSteps.current.has(displayedStep)) return
+    trackedSteps.current.add(displayedStep)
+
+    const stepEvents: Record<number, AnalyticsEvents> = {
+      0: AnalyticsEvents.SURVEY_GOALS_SHOWN,
+      1: AnalyticsEvents.SURVEY_MEDICATION_SHOWN,
+    }
+    const event = stepEvents[displayedStep]
+    if (event) trackEvent(event)
+  }, [displayedStep])
 
   const goToStep = useCallback(
     (next: number) => {
       if (next === step) return
+      trackEvent(AnalyticsEvents.SURVEY_STEP_CHANGED, { from: step, to: next })
       setFadeState("out")
       setTimeout(() => {
         setStep(next)
@@ -38,8 +57,13 @@ export default function SurveyPage() {
   )
 
   const handleContinue = useCallback(() => {
+    if (step === 0) {
+      trackEvent(AnalyticsEvents.SURVEY_GOALS_SENT, { goals: selectedGoals })
+    } else if (step === 1) {
+      trackEvent(AnalyticsEvents.SURVEY_MEDICATION_SENT, { medication: selectedMedication })
+    }
     if (step < TOTAL_STEPS - 1) goToStep(step + 1)
-  }, [step, goToStep])
+  }, [step, goToStep, selectedGoals, selectedMedication])
 
   const handleGoalToggle = useCallback((option: string) => {
     setSelectedGoals((prev) =>
@@ -93,7 +117,7 @@ export default function SurveyPage() {
     >
       <style
         dangerouslySetInnerHTML={{
-          __html: `body { background-color: ${surveyColors.bgPrimary} !important; margin: 0; overflow: hidden; }`,
+          __html: `body { background-color: ${surveyColors.bgPrimary} !important; margin: 0; }`,
         }}
       />
 
@@ -129,11 +153,7 @@ export default function SurveyPage() {
           className="flex-1 flex flex-col max-w-[480px] w-full mx-auto overflow-hidden"
           style={fadeStyle}
         >
-          <PaywallStep
-            packages={packages}
-            loading={packagesLoading}
-            error={packagesError}
-          />
+          <PaywallStep packages={packages} loading={packagesLoading} error={packagesError} />
         </div>
       )}
     </div>
