@@ -7,15 +7,17 @@
     "dev:mobile": "next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
+    "@amplitude/unified": "^1.0.2",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-icons": "^1.3.1",
     "@radix-ui/react-popover": "^1.1.2",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@revenuecat/purchases-js": "^1.27.0",
     "@supabase/supabase-js": "^2.46.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -24,7 +26,7 @@
     "easy-currencies": "^1.8.1",
     "ldrs": "^1.0.2",
     "lucide-react": "^0.454.0",
-    "next": "^14.2.33",
+    "next": "^16.1.6",
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^2.13.3",
@@ -34,8 +36,8 @@
   "devDependencies": {
     "@types/node": "22.8.6",
     "@types/react": "18.3.12",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.5",
+    "eslint": "^9",
+    "eslint-config-next": "^16.1.6",
     "postcss": "^8",
     "tailwindcss": "^3.4.1"
   }

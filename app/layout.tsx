@@ -1,5 +1,6 @@
 import "./globals.css"
 import type { ReactNode } from "react"
+import AmplitudeProvider from "@/components/AmplitudeProvider"
 
 export const metadata = {
   title: "Hairloss AI",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="module"
           src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/lineSpinner.js"
         ></script>
+        <AmplitudeProvider />
         <main>{children}</main>
       </body>
     </html>
